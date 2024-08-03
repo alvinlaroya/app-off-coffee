@@ -143,7 +143,7 @@
 				</DropdownMenu.Root>
 			</div>
 		</header>
-		<main class="p-5">
+		<main class="p-5 overflow-auto">
 			<slot />
 		</main>
 	</div>
