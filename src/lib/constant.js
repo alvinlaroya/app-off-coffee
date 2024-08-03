@@ -1,0 +1,1 @@
+export const companyName = 'App Of Coffee';
