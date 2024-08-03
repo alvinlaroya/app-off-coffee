@@ -6,7 +6,7 @@
 	/* import AuthenticationLight from "$lib/img/examples/authentication-light.png?enhanced";
 	import AuthenticationDark from "$lib/img/examples/authentication-dark.png?enhanced"; */
 
-	$: formType = $page.route.id === "/auth" ? "signin" : "signup";
+	$: formType = $page?.route?.id === "/auth" ? "signin" : "signup";
 	$: setContext("formType", formType);
 </script>
 
