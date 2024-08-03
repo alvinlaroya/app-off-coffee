@@ -62,17 +62,23 @@ const supabase: Handle = async ({ event, resolve }) => {
     })
 }
 
+const isPrivate = (event: any) => {
+    if (event.url.pathname.startsWith('/admin.dashboard')) return true;
+    if (event.url.pathname.startsWith('/store.dashboard')) return true;
+}
+
 const authGuard: Handle = async ({ event, resolve }) => {
     const { session, user } = await event.locals.safeGetSession()
     event.locals.session = session
     event.locals.user = user
 
-    if (!event.locals.session && event.url.pathname.startsWith('/(store)/dashboard')) {
+    console.log("PATH NAME", event.url.pathname)
+    if (!event.locals.session && isPrivate(event)) {
         redirect(303, '/auth')
     }
 
     if (event.locals.session && event.url.pathname === '/auth') {
-        redirect(303, '/(store)/dashboard')
+        redirect(303, 'store.dashboard')
     }
 
     return resolve(event)
