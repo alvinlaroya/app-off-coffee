@@ -1,0 +1,129 @@
+<script>
+    //@ts-nocheck
+    import { Label } from "$lib/components/ui/label";
+    import {
+        Select,
+        SelectTrigger,
+        SelectValue,
+        SelectContent,
+        SelectGroup,
+        SelectLabel,
+        SelectItem,
+    } from "$lib/components/ui/select";
+    import { Button } from "$lib/components/ui/button";
+
+    const timeValues = [
+        "12:00 AM",
+        "01:00 AM",
+        "02:00 AM",
+        "03:00 AM",
+        "04:00 AM",
+        "05:00 AM",
+        "06:00 AM",
+        "07:00 AM",
+        "08:00 AM",
+        "09:00 AM",
+        "10:00 AM",
+        "11:00 AM",
+        "12:00 PM",
+        "01:00 PM",
+        "02:00 PM",
+        "03:00 PM",
+        "04:00 PM",
+        "05:00 PM",
+        "06:00 PM",
+        "07:00 PM",
+        "08:00 PM",
+        "09:00 PM",
+        "10:00 PM",
+        "11:00 PM",
+    ];
+
+    const dailyOpentime = {
+        monday: {
+            from: null,
+            to: null
+        },
+        tuesday: {
+            from: null,
+            to: null
+        },
+        wednesday: {
+            from: null,
+            to: null
+        },
+        thursday: {
+            from: null,
+            to: null
+        },
+        friday: {
+            from: null,
+            to: null
+        },
+        saturday: {
+            from: null,
+            to: null
+        },
+        sunday: {
+            from: null,
+            to: null
+        },
+    };
+</script>
+
+{#each Object.entries(dailyOpentime) as [key, value]}
+    <div class="grid gap-2 grid-cols-4 items-center pt-2">
+        <h1 class="text-xs font-semibold">
+            {key.toUpperCase()}
+        </h1>
+        <div>
+            <Select
+                id="category"
+                selected={{
+                    value: dailyOpentime[key].from,
+                }}
+                onSelectedChange={(e) => (dailyOpentime[key].from = e.value)}
+            >
+                <SelectTrigger>
+                    <SelectValue
+                        placeholder={dailyOpentime[key]?.from ??
+                            "From"}
+                    />
+                </SelectTrigger>
+                <SelectContent class="h-60 overflow-auto">
+                    <SelectGroup>
+                        <SelectLabel>Opening time:</SelectLabel>
+                        {#each timeValues as time}
+                            <SelectItem value={time}>{time}</SelectItem>
+                        {/each}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </div>
+        <div class="flex items-center">
+            <span class="mr-2">-</span>
+            <Select
+                id="category"
+                selected={{
+                    value: dailyOpentime[key].to,
+                }}
+                onSelectedChange={(e) => (dailyOpentime[key].to = e.value)}
+            >
+                <SelectTrigger>
+                    <SelectValue
+                        placeholder={dailyOpentime[key]?.to ??
+                            "To"}
+                    />
+                </SelectTrigger>
+                <SelectContent class="h-60 overflow-auto">
+                    <SelectGroup>
+                        <SelectLabel>Closing time</SelectLabel>
+                        {#each timeValues as time}
+                            <SelectItem value={time}>{time}</SelectItem>
+                        {/each}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </div>
+    </div>
+{/each}

@@ -4,12 +4,9 @@
 	export { className as class };
 </script>
 
-<div
-	class={cn(
-		"bg-card text-card-foreground rounded-lg border shadow-sm",
-		className,
-	)}
+<span
+	class={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
 	{...$$restProps}
 >
 	<slot />
-</div>
+</span>

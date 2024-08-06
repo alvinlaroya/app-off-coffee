@@ -94,6 +94,8 @@
                         class:gap-3={expandedSidenav}
                         class:bg-gray-300={`${groupName}${navigation.link}` ===
                             $page.route.id}
+                        class:disabled={!$page.data.user.user_metadata?.fname &&
+                            navigation.link !== "/store.account"}
                     >
                         <svelte:component
                             this={navigation.icon}
@@ -132,3 +134,11 @@
         </div>
     </div>
 </div>
+
+<style>
+    .disabled {
+        pointer-events: none;
+        color: #ccc;
+        cursor: not-allowed;
+    }
+</style>

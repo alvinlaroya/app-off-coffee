@@ -15,13 +15,13 @@
     } from "$lib/components/ui/table";
     import { Badge } from "$lib/components/ui/badge";
 
+    import { page } from "$app/stores";
+
     import CardMetrics from "$lib/components/reusable/CardMetrics.svelte";
 
     export let data;
     $: ({ notes } = data);
 </script>
-
-<!-- <pre>{JSON.stringify(notes)}</pre> -->
 
 <div class="flex flex-col min-h-screen">
     <main class="flex-1 w-full mx-auto p-2 grid gap-8">
