@@ -5,10 +5,7 @@
 </script>
 
 <div
-	class={cn(
-		"bg-card text-card-foreground rounded-lg border shadow-sm",
-		className,
-	)}
+	class={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
 	{...$$restProps}
 >
 	<slot />
