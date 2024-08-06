@@ -170,7 +170,7 @@
 </script>
 
 <div class="w-full">
-    <div class="flex items-center py-4">
+    <div class="flex items-center pb-4">
         <Input
             class="max-w-sm"
             placeholder="Filter emails..."
