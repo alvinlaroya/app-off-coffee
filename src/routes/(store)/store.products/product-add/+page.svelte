@@ -74,7 +74,7 @@
                         </div>
                         <div class="grid gap-2">
                             <Label htmlFor="category">Category</Label>
-                            <Select id="category">
+                            <Select>
                                 <SelectTrigger>
                                     <SelectValue
                                         placeholder="Select category"

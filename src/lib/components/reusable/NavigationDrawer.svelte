@@ -2,7 +2,7 @@
     //@ts-nocheck
     import { createEventDispatcher } from "svelte";
     import { goto } from "$app/navigation";
-    import { page } from "$app/stores";
+    import { page, navigating } from "$app/stores";
 
     import { Badge } from "$lib/components/ui/badge";
     import { Button } from "$lib/components/ui/button";
@@ -53,7 +53,8 @@
         },
     ];
 
-    export let open = false;
+    export let openSidebar = false;
+    $: if ($navigating) openSidebar = false;
 
     let screenWidth;
 
@@ -62,13 +63,13 @@
 
 <div
     bind:clientWidth={screenWidth}
-    class="border-r bg-white lg:block w-screen lg:w-1/6 fixed left-0 top-0 h-screen z-50 transition-all md:ml-0"
+    class="border-r bg-white lg:block w-full sm:w-20 lg:w-1/6 fixed left-0 top-0 h-screen z-50 transition-all md:ml-0"
     class:w-20={true}
-    class:-ml-[100%]={!open}
-    class:ml-0={open}
+    class:-ml-[100%]={!openSidebar}
+    class:ml-0={openSidebar}
 >
     <div class="flex flex-col gap-2 relative h-[100vh]">
-        <div class="flex h-[60px] items-center px-4 pl-6 pr-4 justify-between">
+        <div class="flex h-[60px] items-center pl-6 pr-4 justify-between">
             <a href="#!" class="flex items-center gap-2 font-semibold">
                 <Store class="h-6 w-6" />
                 {#if expandedSidenav}
@@ -78,7 +79,7 @@
             <Button
                 variant="ghost"
                 size="icon"
-                class="rounded-full flex md:hidden"
+                class="rounded-full flex sm:hidden"
                 on:click={() => dispatch("close")}
             >
                 <X />
@@ -90,7 +91,7 @@
                     <a
                         href={navigation.link}
                         data-sveltekit-preload-data="tap"
-                        class="flex items-center rounded-lg px-3 py-3 text-gray transition-all hover:text-primary"
+                        class="flex md:grid lg:flex items-center rounded-lg px-3 py-3 text-gray transition-all hover:text-primary"
                         class:gap-3={expandedSidenav}
                         class:bg-gray-300={`${groupName}${navigation.link}` ===
                             $page.route.id}
@@ -102,12 +103,14 @@
                             class="h-4 w-4"
                         />
                         {#if expandedSidenav}
-                            <span>{navigation.text}</span>
+                            <span class="flex md:hidden lg:flex"
+                                >{navigation.text}</span
+                            >
                         {/if}
 
                         {#if navigation?.badge}
                             <Badge
-                                class="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-500"
+                                class="ml-auto absolute right-5 md:right-3 lg:right-5 lg:flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-500"
                             >
                                 {navigation.badge}
                             </Badge>

@@ -12,6 +12,7 @@
         SelectItem,
     } from "$lib/components/ui/select";
     import { Button } from "$lib/components/ui/button";
+    import { expoOut } from "svelte/easing";
 
     const timeValues = [
         "12:00 AM",
@@ -40,7 +41,7 @@
         "11:00 PM",
     ];
 
-    const dailyOpentime = {
+    export let value = {
         monday: {
             open: true,
             opening: null,
@@ -79,7 +80,7 @@
     };
 </script>
 
-{#each Object.entries(dailyOpentime) as [key, value]}
+{#each Object.entries(value) as [key, val]}
     <div class="grid gap-2 grid-cols-4 items-center pt-2">
         <h1 class="text-xs font-semibold">
             {key.toUpperCase()}
@@ -87,25 +88,24 @@
         <div class="flex items-center space-x-2">
             <Switch
                 id="open-store"
-                bind:checked={dailyOpentime[key].open}
-                onCheckedChange={(e) => (dailyOpentime[key].open = e)}
+                bind:checked={value[key].open}
+                onCheckedChange={(e) => (value[key].open = e)}
             />
             <Label for="open-store"
-                >{dailyOpentime[key].open ? "OPEN" : "CLOSE"}</Label
+                >{value[key].open ? "OPEN" : "CLOSE"}</Label
             >
         </div>
         <div>
             <Select
-                id="category"
                 selected={{
-                    value: dailyOpentime[key].opening,
+                    value: value[key].opening,
                 }}
-                disabled={!dailyOpentime[key].open}
-                onSelectedChange={(e) => (dailyOpentime[key].opening = e.value)}
+                disabled={!value[key].open}
+                onSelectedChange={(e) => (value[key].opening = e.value)}
             >
                 <SelectTrigger>
                     <SelectValue
-                        placeholder={dailyOpentime[key]?.opening ??
+                        placeholder={value[key]?.opening ??
                             "Opening time"}
                     />
                 </SelectTrigger>
@@ -122,16 +122,15 @@
         <div class="flex items-center">
             <span class="mr-2">-</span>
             <Select
-                id="category"
                 selected={{
-                    value: dailyOpentime[key].closing,
+                    value: value[key].closing,
                 }}
-                disabled={!dailyOpentime[key].open}
-                onSelectedChange={(e) => (dailyOpentime[key].closing = e.value)}
+                disabled={!value[key].open}
+                onSelectedChange={(e) => (value[key].closing = e.value)}
             >
                 <SelectTrigger>
                     <SelectValue
-                        placeholder={dailyOpentime[key]?.closing ??
+                        placeholder={value[key]?.closing ??
                             "Closing time"}
                     />
                 </SelectTrigger>

@@ -20,7 +20,7 @@ export const actions: Actions = {
             console.error(error)
             redirect(303, '/auth/error')
         } else {
-            return console.log("USER DATA", data)
+            return
             redirect(303, '/auth/confirm')
         }
     }

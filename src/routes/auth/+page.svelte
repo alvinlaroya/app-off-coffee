@@ -15,12 +15,12 @@
 	<enhanced:img src={AuthenticationDark} alt="Authentication" class="hidden dark:block" />
 </div> -->
 <div
-	class="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
+	class="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
 >
 	<Button
 		href="auth/signup"
 		variant="ghost"
-		class="absolute right-4 top-4 md:right-8 md:top-8"
+		class="relative md:absolute right-4 top-4 md:right-8 md:top-8"
 	>
 		Signup
 	</Button>
@@ -48,9 +48,9 @@
 			</blockquote>
 		</div>
 	</div>
-	<div class="lg:p-8">
+	<div class="p-8">
 		<div
-			class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]"
+			class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] mt-[40%]"
 		>
 			<div class="flex flex-col space-y-2 text-center">
 				<h1 class="text-2xl font-semibold tracking-tight">

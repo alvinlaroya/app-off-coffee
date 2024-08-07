@@ -160,7 +160,7 @@
                     <input
                         aria-autocomplete="list"
                         type="text"
-                        class="px-4 py-2 text-gray-900 focus:outline-none w-full sticky top-0"
+                        class="px-4 py-2 text-gray-900 focus:outline-none w-full sticky top-0 bg-white"
                         bind:value={searchText}
                         placeholder={searchPlaceholder}
                     />
@@ -212,7 +212,7 @@
         bind:name
         {options}
         required={true}
-        class="text-sm rounded-r-lg block w-full p-2 focus:outline-none border border-gray-300 border-l-gray-100 dark:border-l-gray-700 dark:border-gray-600 bg-base dark:bg-gray-700 
+        class="text-sm rounded-r-lg block w-full p-2 focus:outline-none border border-gray-300 border-l-gray-100 dark:border-l-gray-700 dark:border-gray-600 bg-white dark:bg-gray-700 
         dark:placeholder-gray-400 dark:text-white text-gray-900"
     />
 </div>
