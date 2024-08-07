@@ -1,5 +1,11 @@
 <script>
     //@ts-nocheck
+    import { page } from "$app/stores";
+    import { toast } from "svelte-sonner";
+    import { invalidateAll } from "$app/navigation";
+    import { enhance, applyAction, deserialize } from "$app/forms";
+    import { useEventService, currentlyOpen } from "$lib/utils";
+    import { storageRestaurantUrl, days } from "$lib/constant";
     import {
         Card,
         CardHeader,
@@ -12,6 +18,7 @@
     import { Switch } from "$lib/components/ui/switch";
     import { Input } from "$lib/components/ui/input";
     import { Textarea } from "$lib/components/ui/textarea";
+    import * as Alert from "$lib/components/ui/alert";
     import {
         Select,
         SelectTrigger,
@@ -28,149 +35,383 @@
     import PeakHoursPicker from "../(components)/peak-hours-picker.svelte";
     import AdvancedTelInput from "$lib/components/reusable/AdvancedTelInput.svelte";
 
-    import { Upload, Store, Clock, MapPin } from "lucide-svelte";
+    import {
+        Upload,
+        Store,
+        Clock,
+        MapPin,
+        LoaderCircle,
+        CircleAlert,
+    } from "lucide-svelte";
 
-    let previewImage;
+    export let data;
 
-    const handleImageUpload = (event) => {
-        const file = event.target.files[0];
-        previewImage = URL.createObjectURL(file);
-    };
+    $: ({ myStore } = data);
 
-    let storeState = {
-        name: "Manifiesto",
-        description:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        address: "San Antonio, Agoo, La Union",
+    $: storeState = myStore ?? {
+        name: "",
+        description: "",
+        address: "",
         location: {},
         rating: 0,
         followers: 0,
-        operation_time: {},
-        website: "manifiesto.com",
-        phone: "+639388566223",
-        email: "manifiesto@gmail.com",
-        peak_hours: {},
+        operation_time: {
+            monday: {
+                open: true,
+                opening: null,
+                closing: null,
+            },
+            tuesday: {
+                open: true,
+                opening: null,
+                closing: null,
+            },
+            wednesday: {
+                open: true,
+                opening: null,
+                closing: null,
+            },
+            thursday: {
+                open: true,
+                opening: null,
+                closing: null,
+            },
+            friday: {
+                open: true,
+                opening: null,
+                closing: null,
+            },
+            saturday: {
+                open: true,
+                opening: null,
+                closing: null,
+            },
+            sunday: {
+                open: true,
+                opening: null,
+                closing: null,
+            },
+        },
+        website: "",
+        phone: "",
+        email: "",
+        is_open_today: true,
+        image: null,
+        peak_hours: {
+            monday: {
+                from: null,
+                to: null,
+            },
+            tuesday: {
+                from: null,
+                to: null,
+            },
+            wednesday: {
+                from: null,
+                to: null,
+            },
+            thursday: {
+                from: null,
+                to: null,
+            },
+            friday: {
+                from: null,
+                to: null,
+            },
+            saturday: {
+                from: null,
+                to: null,
+            },
+            sunday: {
+                from: null,
+                to: null,
+            },
+        },
     };
 
-    let is_open_today = false;
+    let isLoading = false;
+
+    let uploadedImage = null;
+
+    const handleImageUpload = async (event) => {
+        const uniqueDate = `${new Date().getDate()}${new Date().getHours()}${new Date().getMinutes()}${new Date().getSeconds()}`;
+        const file = event.target.files[0];
+        uploadedImage = URL.createObjectURL(file);
+        const { data, error } = await $page.data.supabase.storage
+            .from("restaurant-images")
+            .upload(
+                `public/${storeState.name}${file.name}${uniqueDate}.png`,
+                file,
+                {
+                    cacheControl: "3600",
+                    upsert: false,
+                },
+            );
+
+        if (error) {
+            console.error("UPload image error", error);
+        } else {
+            storeState.image = data.path;
+        }
+
+        uploadedImage = null;
+    };
+
+    const formData = (obj) => {
+        var form_data = new FormData();
+        for (var key in obj) {
+            form_data.append(key, obj[key]);
+        }
+        return form_data;
+    };
+
+    const onAddStoreHandler = async (event) => {
+        isLoading = true;
+        try {
+            const result = await useEventService(
+                storeState,
+                `${$page.url.href}?/addStore`,
+            );
+        } catch (error) {
+            console.error("ERROR ADD STORE", error);
+        }
+        isLoading = false;
+    };
+
+    const onUpdateStoreHandler = async (event) => {
+        isLoading = true;
+        try {
+            const result = await useEventService(
+                storeState,
+                `${$page.url.href}?/updateStore`,
+            );
+        } catch (error) {
+            console.error("ERROR ADD STORE", error);
+        }
+        isLoading = false;
+        toast.success(`${storeState.name} has been updated`);
+    };
+
+    const updateOpenCloseHandler = async (value) => {
+        isLoading = true;
+        const result = await useEventService(
+            {
+                id: storeState.id,
+                is_open_today: value,
+            },
+            `${$page.url.href}?/updateOpenClose`,
+        );
+        isLoading = false;
+    };
+
+    const storeActivationHandler = async (value) => {
+        isLoading = true;
+        const result = await useEventService(
+            {
+                id: storeState.id,
+                is_active: value,
+            },
+            `${$page.url.href}?/updateActivation`,
+        );
+        isLoading = false;
+    };
+
+    $: openAndClosing = () => {
+        const currentDate = new Date();
+        const currentDay = currentDate.getDay();
+        const opening = storeState.operation_time[days[currentDay - 1]].opening;
+        const closing = storeState.operation_time[days[currentDay - 1]].closing;
+        return {
+            isOpen: currentlyOpen(opening, closing),
+            closing,
+        };
+    };
+
+    $: disabled = isLoading || !storeState.is_active;
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-    <Card class="w-full col-span-2">
-        <CardHeader>
-            <CardTitle>
-                <div class="flex justify-between">
-                    <h1>Create Store</h1>
-                    <div class="flex flex-col items-end space-y-2">
-                        <Label for="open-store"
-                            >{is_open_today ? "OPEN" : "CLOSE"} TODAY</Label
-                        >
-                        <Switch
-                            id="open-store"
-                            bind:checked={is_open_today}
-                            onCheckedChange={(e) => (is_open_today = e)}
-                        />
-                    </div>
-                </div>
-            </CardTitle>
-            <CardDescription
-                >Fill out the form to add details on your store.</CardDescription
-            >
-        </CardHeader>
-        <CardContent>
-            <form class="grid gap-6">
-                <div class="grid gap-2">
-                    <Label htmlFor="name">Store Name</Label>
-                    <Input
-                        id="name"
-                        placeholder="Enter product name"
-                        bind:value={storeState.name}
-                    />
-                </div>
-                <div class="grid gap-2">
-                    <Label htmlFor="description">Store Description</Label>
-                    <Textarea
-                        id="description"
-                        placeholder="Enter product description"
-                        class="min-h-[120px]"
-                        bind:value={storeState.description}
-                    />
-                </div>
-                <div class="grid gap-2">
-                    <Label htmlFor="name">Store Address</Label>
-                    <Input
-                        id="name"
-                        placeholder="Enter product name"
-                        bind:value={storeState.address}
-                    />
-                </div>
-                <div class="grid gap-2">
-                    <Accordion.Root class="w-full" value="item-1">
-                        <Accordion.Item value="item-1">
-                            <Accordion.Trigger>
-                                <Label htmlFor="name">Operation Time</Label>
-                            </Accordion.Trigger>
-                            <Accordion.Content>
-                                <OperationTimeRangePicker />
-                            </Accordion.Content>
-                        </Accordion.Item>
-                    </Accordion.Root>
-                </div>
-                <div class="grid gap-2 pt-4">
-                    <Label htmlFor="name">Phone</Label>
-                    <AdvancedTelInput bind:value={storeState.phone} />
-                </div>
-                <div class="grid gap-2">
-                    <Label htmlFor="name">Website</Label>
-                    <Input
-                        id="website"
-                        name="website"
-                        placeholder="Enter Website"
-                    />
-                </div>
-                <div class="grid gap-2">
-                    <Accordion.Root class="w-full" value="item-1">
-                        <Accordion.Item value="item-1">
-                            <Accordion.Trigger>
-                                <Label htmlFor="name">Peak Hours</Label>
-                            </Accordion.Trigger>
-                            <Accordion.Content>
-                                <PeakHoursPicker />
-                            </Accordion.Content>
-                        </Accordion.Item>
-                    </Accordion.Root>
-                </div>
-                <div class="grid gap-2">
-                    <div class="grid sm:grid-cols-1 gap-2 divide-y"></div>
-                    <div class="grid gap-2">
-                        <Label htmlFor="image">Product Image</Label>
-                        <div class="flex items-center gap-2">
-                            <Input
-                                id="image"
-                                type="file"
-                                on:change={handleImageUpload}
+    <div class="w-full col-span-3 lg:col-span-2 order-2 lg:order-1">
+        {#if storeState?.id && !storeState.is_active}
+            <Alert.Root variant="destructive" class="mb-4">
+                <CircleAlert class="h-4 w-4" />
+                <Alert.Title>Deactivated</Alert.Title>
+                <Alert.Description>
+                    Your store is deactivated and not visible to all customer's
+                    application.
+                </Alert.Description>
+            </Alert.Root>
+        {/if}
+        <Card class="w-full">
+            <form use:enhance method="POST">
+                <CardHeader>
+                    <div class="flex justify-between">
+                        <div class="flex flex-col space-y-2">
+                            <CardTitle>Manage Store</CardTitle>
+                            <CardDescription
+                                >Fill out the form to add details on your store.</CardDescription
+                            >
+                        </div>
+                        <div class="flex flex-col items-end space-y-2">
+                            <Label for="open-store"
+                                >{storeState.is_open_today ? "OPEN" : "CLOSE"} TODAY</Label
+                            >
+                            <Switch
+                                id="open-store"
+                                bind:checked={storeState.is_open_today}
+                                onCheckedChange={(e) =>
+                                    updateOpenCloseHandler(e)}
                             />
-                            <Button variant="outline" size="sm">
-                                <Upload class="h-4 w-4 mr-2" />
-                                Upload
-                            </Button>
                         </div>
                     </div>
-                </div>
+                </CardHeader>
+                <CardContent>
+                    <form class="grid gap-6">
+                        <div class="grid gap-2">
+                            <Label htmlFor="name">Store Name</Label>
+                            <Input
+                                id="name"
+                                placeholder="Enter product name"
+                                bind:value={storeState.name}
+                                {disabled}
+                            />
+                        </div>
+                        <div class="grid gap-2">
+                            <Label htmlFor="description"
+                                >Store Description</Label
+                            >
+                            <Textarea
+                                id="description"
+                                placeholder="Enter product description"
+                                class="min-h-[120px]"
+                                bind:value={storeState.description}
+                                {disabled}
+                            />
+                        </div>
+                        <div class="grid gap-2">
+                            <Label htmlFor="name">Store Address</Label>
+                            <Input
+                                id="name"
+                                placeholder="Enter product name"
+                                bind:value={storeState.address}
+                                {disabled}
+                            />
+                        </div>
+                        <div class="grid gap-2">
+                            <Accordion.Root class="w-full" value="item-1">
+                                <Accordion.Item value="item-1">
+                                    <Accordion.Trigger>
+                                        <Label htmlFor="name"
+                                            >Operation Time</Label
+                                        >
+                                    </Accordion.Trigger>
+                                    <Accordion.Content>
+                                        <OperationTimeRangePicker
+                                            bind:value={storeState.operation_time}
+                                        />
+                                    </Accordion.Content>
+                                </Accordion.Item>
+                            </Accordion.Root>
+                        </div>
+                        <div class="grid gap-2 pt-4">
+                            <Label htmlFor="name">Phone</Label>
+                            <AdvancedTelInput bind:value={storeState.phone} />
+                        </div>
+                        <div class="grid gap-2">
+                            <Label htmlFor="name">Website</Label>
+                            <Input
+                                id="website"
+                                name="website"
+                                placeholder="Enter Website"
+                                bind:value={storeState.website}
+                                {disabled}
+                            />
+                        </div>
+                        <div class="grid gap-2">
+                            <Accordion.Root class="w-full" value="item-1">
+                                <Accordion.Item value="item-1">
+                                    <Accordion.Trigger>
+                                        <Label htmlFor="name">Peak Hours</Label>
+                                    </Accordion.Trigger>
+                                    <Accordion.Content>
+                                        <PeakHoursPicker
+                                            operationTime={storeState.operation_time}
+                                            bind:value={storeState.peak_hours}
+                                        />
+                                    </Accordion.Content>
+                                </Accordion.Item>
+                            </Accordion.Root>
+                        </div>
+                        <div class="grid gap-2">
+                            <div
+                                class="grid sm:grid-cols-1 gap-2 divide-y"
+                            ></div>
+                            <div class="grid gap-2">
+                                <Label htmlFor="image">Product Image</Label>
+                                <div class="flex items-center gap-2">
+                                    <Input
+                                        id="image"
+                                        type="file"
+                                        on:change={handleImageUpload}
+                                    />
+                                    <Button variant="outline" size="sm">
+                                        <Upload class="h-4 w-4 mr-2" />
+                                        Upload
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </CardContent>
+                <CardFooter>
+                    <div class="flex justify-end w-full">
+                        {#if storeState?.id}
+                            <Button
+                                class="ml-1"
+                                type="submit"
+                                disabled={isLoading}
+                                on:click={onUpdateStoreHandler}
+                            >
+                                {#if isLoading}
+                                    <LoaderCircle
+                                        color="#ffffff"
+                                        class="animate-spin mr-2"
+                                    />
+                                {/if}
+                                Save Changes
+                            </Button>
+                        {:else}
+                            <Button
+                                class="ml-1"
+                                type="submit"
+                                disabled={isLoading}
+                                on:click={onAddStoreHandler}
+                            >
+                                {#if isLoading}
+                                    <LoaderCircle
+                                        color="#ffffff"
+                                        class="animate-spin mr-2"
+                                    />
+                                {/if}
+                                Submit
+                            </Button>
+                        {/if}
+                    </div>
+                </CardFooter>
             </form>
-        </CardContent>
-        <CardFooter>
-            <Button class="ml-auto">Submit</Button>
-        </CardFooter>
-    </Card>
-    <div class="sticky top-[100px]" style="align-self: flex-start">
+        </Card>
+    </div>
+
+    <div class="relative lg:sticky mt-5 lg:mt-0 top-0 lg:top-[100px] col-span-3 lg:col-span-1 order-1 lg:order-2" style="align-self: flex-start">
         <div
             class="flex flex-col justify-center w-full bg-white p-4 rounded-md shadow-sm"
         >
             <div class="w-full overflow-hidden -mt-9">
-                {#if previewImage}
+                {#if storeState?.image}
                     <img
-                        src={previewImage}
+                        src={uploadedImage
+                            ? uploadedImage
+                            : `${storageRestaurantUrl}${storeState.image}`}
                         alt="Product Preview"
                         class="rounded-md object-cover object-center"
                     />
@@ -184,7 +425,9 @@
             </div>
             <div class="py-3 flex flex-col">
                 <div class="flex justify-between mb-4">
-                    <h1 class="text-3xl font-semibold">{storeState.name}</h1>
+                    <h1 class="text-2xl font-semibold">
+                        {storeState?.name || "Store Name"}
+                    </h1>
                     <span>4.3 (127)</span>
                 </div>
                 <div class="flex space-x-2 items-center">
@@ -194,12 +437,16 @@
                 <div class="flex space-x-2 items-center">
                     <Clock class="w-4 h-4" />
                     <p class="text-sm">
-                        <span class="text-green-800">Open </span>| Closes 10pm
+                        <span class="text-green-800"
+                            >{openAndClosing().isOpen ? "Open" : "Closed"}
+                        </span>⋅ Closes {openAndClosing().closing}
                     </p>
                 </div>
                 <div class="flex space-x-2 items-center">
                     <MapPin class="w-4 h-4" />
-                    <span class="text-sm">{storeState.address}</span>
+                    <span class="text-sm"
+                        >{storeState?.address || "Store Address"}</span
+                    >
                 </div>
                 <div class="py-3 text-sm font-thin">
                     {storeState.description}
@@ -217,6 +464,27 @@
         >
     </CardHeader>
     <CardContent>
-        <Button variant="destructive">Deactivate Store</Button>
+        {#if storeState.is_active}
+            <Button
+                variant="destructive"
+                on:click={() => storeActivationHandler(false)}
+                disabled={isLoading}
+            >
+                {#if isLoading}
+                    <LoaderCircle color="#ffffff" class="animate-spin mr-2" />
+                {/if}
+                Deactivate Store
+            </Button>
+        {:else}
+            <Button
+                on:click={() => storeActivationHandler(true)}
+                disabled={isLoading}
+            >
+                {#if isLoading}
+                    <LoaderCircle color="#ffffff" class="animate-spin mr-2" />
+                {/if}
+                Activate Store
+            </Button>
+        {/if}
     </CardContent>
 </Card>

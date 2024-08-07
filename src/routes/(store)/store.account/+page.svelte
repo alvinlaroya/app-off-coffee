@@ -25,6 +25,10 @@
     $: ({ fname, lname, email, address, phone, avatar } =
         $page.data.user.user_metadata);
 
+    export let data;
+
+    $: ({ myStore } = data);
+
     let isLoading = false;
 
     async function onSubmit(event) {
@@ -58,7 +62,7 @@
         action="?/update"
         on:submit|preventDefault={onSubmit}
     >
-        <div class="w-full mx-auto grid md:grid-cols-2 gap-8">
+        <div class="w-full mx-auto grid md:grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
                 <header class="bg-primary py-6 px-4 md:px-6 rounded-t-lg">
                     <div class="flex items-center gap-4">
@@ -84,7 +88,8 @@
                             <div
                                 class="text-primary-foreground text-sm flex items-center"
                             >
-                                <Store class="h-4 w-4 mr-1" /> Manifiesto Owner
+                                <Store class="h-4 w-4 mr-1" />
+                                {myStore?.name ?? ""} Owner
                             </div>
                         </div>
                     </div>
@@ -227,7 +232,7 @@
                                     <Label htmlFor="profile-visibility"
                                         >Profile Visibility</Label
                                     >
-                                    <Select id="profile-visibility">
+                                    <Select>
                                         <SelectTrigger>
                                             <SelectValue
                                                 placeholder="Select visibility"
@@ -263,18 +268,18 @@
                     </div>
                 </div>
             </div>
-            <div class="flex justify-end mt-8 col-span-2">
-                <div class="flex space-x-2">
-                    <Button class="ml-auto" variant="destructive"
-                        >Delete Account</Button
-                    >
-                    <Button class="ml-auto" variant="secondary"
-                        >Reset Password</Button
-                    >
-                    <Button class="ml-auto" type="submit"
-                        >{isLoading ? "Loading" : "Save Changes"}</Button
-                    >
-                </div>
+        </div>
+        <div class="flex justify-end mt-8 col-span-2">
+            <div class="flex space-x-2">
+                <Button class="ml-auto" variant="destructive"
+                    >Delete Account</Button
+                >
+                <Button class="ml-auto" variant="secondary"
+                    >Reset Password</Button
+                >
+                <Button class="ml-auto" type="submit"
+                    >{isLoading ? "Loading" : "Save Changes"}</Button
+                >
             </div>
         </div>
     </form>

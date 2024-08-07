@@ -1,6 +1,29 @@
 import { redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
+
+export const load = async ({ locals: { supabase } }) => {
+
+    const fetchMyStore = async () => {
+        const { data: { user } } = await supabase.auth.getUser()
+
+        let { data: stores, error } = await supabase
+            .from('stores')
+            .select("name")
+            .eq('owner_id', user.id)
+
+        if (error) {
+            console.error(error)
+        } else {
+            return stores[0] ?? {}
+        }
+    }
+
+    return {
+        myStore: await fetchMyStore()
+    };
+}
+
 export const actions: Actions = {
     update: async ({ request, locals: { supabase } }) => {
         const formData = await request.formData()

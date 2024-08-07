@@ -7,10 +7,12 @@
     import { Button } from "$lib/components/ui/button";
 
     import { Store, Search, Menu } from "lucide-svelte";
+
+    export let openSidebar;
 </script>
 
 <header
-    class="flex h-14 w-full md:w-5/6 lg:h-[60px] items-center gap-4 border-b bg-white px-4 fixed top-0"
+    class="flex h-14 w-full md:w-[90%] lg:w-5/6 lg:h-[60px] items-center gap-4 border-b bg-white px-4 fixed top-0 z-40"
 >
     <a href={"/private"} class="lg:hidden">
         <Store class="h-6 w-6" />

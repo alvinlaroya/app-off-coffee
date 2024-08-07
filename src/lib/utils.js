@@ -1,6 +1,9 @@
+//@ts-nocheck
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
+import { invalidateAll } from "$app/navigation";
+import { enhance, applyAction, deserialize } from "$app/forms";
 
 export function cn(...inputs) {
 	return twMerge(clsx(inputs));
@@ -46,3 +49,41 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+const formData = (obj) => {
+	var form_data = new FormData();
+	for (var key in obj) {
+		form_data.append(key, obj[key]);
+	}
+	return form_data;
+};
+
+export const useEventService = async (obj, action) => {
+	const response = await fetch(action, {
+		method: "POST",
+		body: JSON.stringify(obj),
+	});
+
+	/** @type {import('@sveltejs/kit').ActionResult} */
+	const result = deserialize(await response.text());
+
+	if (result.type === "success") {
+		// rerun all `load` functions, following the successful update
+		await invalidateAll();
+	}
+
+	applyAction(result);
+
+	return result;
+}
+
+export const currentlyOpen = (opening, closing) => {
+	const currentTime = new Date().getHours();
+	const formattedOpening = Number(opening.split(':')[0])
+	const formattedClosing = Number(closing.split(':')[0])
+
+	const openingTime = opening.split(':00 ')[1] === 'PM' ? formattedOpening + 12 : formattedOpening
+	const closingTime = closing.split(':00 ')[1] === 'PM' ? formattedClosing + 12 : formattedClosing
+
+	return openingTime <= currentTime && currentTime <= closingTime
+}

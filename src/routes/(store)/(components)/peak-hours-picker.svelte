@@ -39,61 +39,67 @@
         "11:00 PM",
     ];
 
-    const dailyOpentime = {
+    export let value = {
         monday: {
             from: null,
-            to: null
+            to: null,
         },
         tuesday: {
             from: null,
-            to: null
+            to: null,
         },
         wednesday: {
             from: null,
-            to: null
+            to: null,
         },
         thursday: {
             from: null,
-            to: null
+            to: null,
         },
         friday: {
             from: null,
-            to: null
+            to: null,
         },
         saturday: {
             from: null,
-            to: null
+            to: null,
         },
         sunday: {
             from: null,
-            to: null
+            to: null,
         },
+    };
+
+    export let operationTime = {};
+
+    const filteredTimeValues = (values, day) => {
+        /* const a = values.indexOf(operationTime[day].opening);
+        const b = values.indexOf(operationTime[day].closing);
+        const result = values.splice(a, b - a + 1);
+        return result; */
+        return values
     };
 </script>
 
-{#each Object.entries(dailyOpentime) as [key, value]}
+{#each Object.entries(value) as [key, val]}
     <div class="grid gap-2 grid-cols-4 items-center pt-2">
         <h1 class="text-xs font-semibold">
             {key.toUpperCase()}
         </h1>
         <div>
             <Select
-                id="category"
                 selected={{
-                    value: dailyOpentime[key].from,
+                    value: value[key].from,
                 }}
-                onSelectedChange={(e) => (dailyOpentime[key].from = e.value)}
+                onSelectedChange={(e) => (value[key].from = e.value)}
             >
                 <SelectTrigger>
-                    <SelectValue
-                        placeholder={dailyOpentime[key]?.from ??
-                            "From"}
-                    />
+                    <SelectValue placeholder={value[key]?.from ?? "From"} />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>
                         <SelectLabel>Opening time:</SelectLabel>
-                        {#each timeValues as time}
+                        {#each filteredTimeValues(timeValues, key) as time}
                             <SelectItem value={time}>{time}</SelectItem>
                         {/each}
                     </SelectGroup>
@@ -103,22 +109,18 @@
         <div class="flex items-center">
             <span class="mr-2">-</span>
             <Select
-                id="category"
                 selected={{
-                    value: dailyOpentime[key].to,
+                    value: value[key].to,
                 }}
-                onSelectedChange={(e) => (dailyOpentime[key].to = e.value)}
+                onSelectedChange={(e) => (value[key].to = e.value)}
             >
                 <SelectTrigger>
-                    <SelectValue
-                        placeholder={dailyOpentime[key]?.to ??
-                            "To"}
-                    />
+                    <SelectValue placeholder={value[key]?.to ?? "To"} />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>
                         <SelectLabel>Closing time</SelectLabel>
-                        {#each timeValues as time}
+                        {#each filteredTimeValues(timeValues, key) as time}
                             <SelectItem value={time}>{time}</SelectItem>
                         {/each}
                     </SelectGroup>
