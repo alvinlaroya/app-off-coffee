@@ -42,6 +42,7 @@
         MapPin,
         LoaderCircle,
         CircleAlert,
+        Camera,
     } from "lucide-svelte";
 
     export let data;
@@ -130,13 +131,18 @@
     };
 
     let isLoading = false;
+    let isActivating = false;
 
+    let fileUpload;
     let uploadedImage = null;
+    let uploadingImage = false;
+    let uploadImageError = {};
 
     const handleImageUpload = async (event) => {
+        uploadingImage = true;
         const uniqueDate = `${new Date().getDate()}${new Date().getHours()}${new Date().getMinutes()}${new Date().getSeconds()}`;
         const file = event.target.files[0];
-        uploadedImage = URL.createObjectURL(file);
+        uploadedImage = storeState.image;
         const { data, error } = await $page.data.supabase.storage
             .from("restaurant-images")
             .upload(
@@ -150,11 +156,23 @@
 
         if (error) {
             console.error("UPload image error", error);
+            uploadImageError.title = "Image Upload Failed!";
+            uploadImageError.desc = error.message;
+            toast.error("Image Upload Failed!", {
+                description: error.message,
+            });
+            storeState.image = null;
+            uploadedImage = null;
+            uploadingImage = false;
+            uploadImageError.error = true;
+            uploadImageError.title = "Image Upload Failed!";
+            uploadImageError.desc = error.message;
         } else {
             storeState.image = data.path;
+            uploadingImage = false;
+            uploadedImage = null;
+            uploadImageError = {};
         }
-
-        uploadedImage = null;
     };
 
     const formData = (obj) => {
@@ -205,7 +223,7 @@
     };
 
     const storeActivationHandler = async (value) => {
-        isLoading = true;
+        isActivating = true;
         const result = await useEventService(
             {
                 id: storeState.id,
@@ -213,10 +231,20 @@
             },
             `${$page.url.href}?/updateActivation`,
         );
-        isLoading = false;
+        isActivating = false;
     };
 
     $: openAndClosing = () => {
+        if (
+            !storeState?.operation_time?.opening &&
+            !storeState?.operation_time?.closing
+        ) {
+            return {
+                isOpen: false,
+                closing: null,
+            };
+        }
+
         const currentDate = new Date();
         const currentDay = currentDate.getDay();
         const opening = storeState.operation_time[days[currentDay - 1]].opening;
@@ -227,7 +255,7 @@
         };
     };
 
-    $: disabled = isLoading || !storeState.is_active;
+    $: disabled = isLoading || isActivating;
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -342,25 +370,12 @@
                                 </Accordion.Item>
                             </Accordion.Root>
                         </div>
-                        <div class="grid gap-2">
-                            <div
-                                class="grid sm:grid-cols-1 gap-2 divide-y"
-                            ></div>
-                            <div class="grid gap-2">
-                                <Label htmlFor="image">Product Image</Label>
-                                <div class="flex items-center gap-2">
-                                    <Input
-                                        id="image"
-                                        type="file"
-                                        on:change={handleImageUpload}
-                                    />
-                                    <Button variant="outline" size="sm">
-                                        <Upload class="h-4 w-4 mr-2" />
-                                        Upload
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
+                        <Input
+                            id="image"
+                            class="hidden"
+                            type="file"
+                            on:change={handleImageUpload}
+                        />
                     </form>
                 </CardContent>
                 <CardFooter>
@@ -369,7 +384,7 @@
                             <Button
                                 class="ml-1"
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={isLoading || isActivating}
                                 on:click={onUpdateStoreHandler}
                             >
                                 {#if isLoading}
@@ -384,7 +399,7 @@
                             <Button
                                 class="ml-1"
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={isLoading || isActivating}
                                 on:click={onAddStoreHandler}
                             >
                                 {#if isLoading}
@@ -402,28 +417,52 @@
         </Card>
     </div>
 
-    <div class="relative lg:sticky mt-5 lg:mt-0 top-0 lg:top-[100px] col-span-3 lg:col-span-1 order-1 lg:order-2" style="align-self: flex-start">
+    <div
+        class="relative lg:sticky mt-5 lg:mt-0 top-0 col-span-3 lg:col-span-1 order-1 lg:order-2"
+        class:lg:top-[70px]={uploadImageError.error}
+        class:lg:top-[100px]={!uploadImageError.error}
+        style="align-self: flex-start"
+    >
+        {#if uploadImageError?.error}
+            <Alert.Root variant="destructive" class="mb-9">
+                <CircleAlert class="h-4 w-4" />
+                <Alert.Title>{uploadImageError.title}</Alert.Title>
+                <Alert.Description>{uploadImageError.desc}.</Alert.Description>
+            </Alert.Root>
+        {/if}
         <div
             class="flex flex-col justify-center w-full bg-white p-4 rounded-md shadow-sm"
         >
-            <div class="w-full overflow-hidden -mt-9">
-                {#if storeState?.image}
+            <div
+                class="w-full h-[18rem] overflow-hidden -mt-9 rounded-md grid bg-center bg-contain"
+                style="background-image: url('https://www.autopaintguard.com/wp-content/uploads/2018/03/placeholder-image10.jpg');"
+            >
+                {#if storeState?.image && !uploadingImage}
                     <img
                         src={uploadedImage
                             ? uploadedImage
                             : `${storageRestaurantUrl}${storeState.image}`}
                         alt="Product Preview"
-                        class="rounded-md object-cover object-center"
-                    />
-                {:else}
-                    <img
-                        src="https://www.autopaintguard.com/wp-content/uploads/2018/03/placeholder-image10.jpg"
-                        alt="Product Preview"
-                        class="rounded-md object-cover object-center"
+                        class="rounded-md object-cover w-full h-full"
                     />
                 {/if}
             </div>
-            <div class="py-3 flex flex-col">
+            <div class="z-10 -mt-7">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    class="bg-gray-200 rounded-full border-4 border-white ml-3 h-14 w-14"
+                    on:click={() => document.getElementById("image").click()}
+                >
+                    {#if uploadingImage}
+                        <LoaderCircle color="#000000" class="animate-spin" />
+                    {:else}
+                        <Camera class="h-6 w-6" />
+                    {/if}
+                </Button>
+            </div>
+
+            <div class="py-3 flex flex-col -mt-3">
                 <div class="flex justify-between mb-4">
                     <h1 class="text-2xl font-semibold">
                         {storeState?.name || "Store Name"}
@@ -468,9 +507,9 @@
             <Button
                 variant="destructive"
                 on:click={() => storeActivationHandler(false)}
-                disabled={isLoading}
+                disabled={isLoading || isActivating}
             >
-                {#if isLoading}
+                {#if isActivating}
                     <LoaderCircle color="#ffffff" class="animate-spin mr-2" />
                 {/if}
                 Deactivate Store
@@ -478,9 +517,9 @@
         {:else}
             <Button
                 on:click={() => storeActivationHandler(true)}
-                disabled={isLoading}
+                disabled={isLoading || isActivating}
             >
-                {#if isLoading}
+                {#if isActivating}
                     <LoaderCircle color="#ffffff" class="animate-spin mr-2" />
                 {/if}
                 Activate Store
