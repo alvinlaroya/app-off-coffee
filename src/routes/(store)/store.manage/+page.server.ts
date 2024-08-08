@@ -26,7 +26,7 @@ export const load = async ({ locals: { supabase } }) => {
 export const actions: Actions = {
     addStore: async ({ request, locals: { supabase } }) => {
         const formData = await request.json()
-        const { name, description, address, location, rating, followers, operation_time, website, phone, email, peak_hours } = formData
+        const { name, description, address, location, rating, followers, operation_time, website, phone, email, image, peak_hours } = formData
 
         const { data: { user } } = await supabase.auth.getUser()
 
@@ -44,6 +44,7 @@ export const actions: Actions = {
                     website,
                     phone,
                     email,
+                    image,
                     peak_hours,
                     owner_id: user.id
                 }
