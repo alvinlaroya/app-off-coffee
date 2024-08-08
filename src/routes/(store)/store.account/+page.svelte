@@ -20,6 +20,7 @@
         SelectItem,
     } from "$lib/components/ui/select";
     import { Button } from "$lib/components/ui/button";
+    import AdvancedTelInput from "$lib/components/reusable/AdvancedTelInput.svelte";
     import { Store, AtSign } from "lucide-svelte";
 
     $: ({ fname, lname, email, address, phone, avatar } =
@@ -164,8 +165,7 @@
                                 </div>
                                 <div class="space-y-2">
                                     <Label htmlFor="phone">Phone</Label>
-                                    <Input
-                                        id="phone"
+                                    <AdvancedTelInput
                                         name="phone"
                                         value={phone ?? ""}
                                         disabled={isLoading}

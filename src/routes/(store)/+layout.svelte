@@ -5,6 +5,7 @@
 	import { onMount } from "svelte";
 
 	import NavigationDrawer from "$lib/components/reusable/NavigationDrawer.svelte";
+	import NavigatingContainer from "$lib/components/reusable/NavigatingContainer.svelte";
 
 	import {
 		LayoutDashboard,
@@ -19,6 +20,7 @@
 		Mail,
 		Settings,
 		LogOut,
+		LoaderCircle,
 	} from "lucide-svelte";
 
 	import AppBar from "$lib/components/reusable/AppBar.svelte";
@@ -119,7 +121,10 @@
 	on:logout={logout}
 />
 
-<div class="flex-1 ml-0 w-full md:ml-20 md:w-[90%] lg:ml-[16.666667%] lg:w-5/6 relative">
+<div
+	class="flex-1 ml-0 w-full md:ml-20 md:w-[90%] lg:ml-[16.666667%] lg:w-5/6 relative"
+>
+	<NavigatingContainer />
 	<AppBar bind:openSidebar />
 	<main class="p-5 py-20 bg-slate-100 w-full min-h-screen z-0">
 		<slot />
