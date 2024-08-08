@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import { invalidateAll } from "$app/navigation";
 import { enhance, applyAction, deserialize } from "$app/forms";
+import imageCompression from 'browser-image-compression';
 
 export function cn(...inputs) {
 	return twMerge(clsx(inputs));
@@ -86,4 +87,23 @@ export const currentlyOpen = (opening, closing) => {
 	const closingTime = closing.split(':00 ')[1] === 'PM' ? formattedClosing + 12 : formattedClosing
 
 	return openingTime <= currentTime && currentTime <= closingTime
+}
+
+export const uploadCompressImage = async (imageFile) => {
+	const options = {
+		maxSizeMB: 5,
+		maxWidthOrHeight: 1920,
+		useWebWorker: true,
+	}
+	try {
+		const compressedFile = await imageCompression(imageFile, options);
+		console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
+		console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+
+		return compressedFile;
+		/* const response = await uploadToServer(bucket, compressedFile, filename);
+		console.log(response) */
+	} catch (error) {
+		console.log(error);
+	}
 }
