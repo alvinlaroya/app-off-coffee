@@ -3,6 +3,34 @@ import type { Actions, PageServerLoad } from './$types'
 
 export const load = async ({ locals: { supabase } }) => {
 
+    const fethNearbyStore = async () => {
+        const { data, error } = await supabase.rpc('nearby_stores', {
+            lat: 120.6187539,
+            long: 16.3779467,
+        })
+
+        if (error) {
+            console.error("Error fetching nearby store")
+        } else {
+            return data ?? []
+        }
+    }
+
+    const fethStoresInView = async () => {
+        const { data, error } = await supabase.rpc('stores_in_view', {
+            min_lat: 120.618,
+            min_long: 16.377,
+            max_lat: 120.619,
+            max_long: 16.376
+        })
+
+        if (error) {
+            console.error("Error fetching nearby store")
+        } else {
+            return data ?? []
+        }
+    }
+
     const fetchMyStore = async () => {
         const { data: { user } } = await supabase.auth.getUser()
 
@@ -19,7 +47,9 @@ export const load = async ({ locals: { supabase } }) => {
     }
 
     return {
-        myStore: await fetchMyStore()
+        myStore: await fetchMyStore(),
+        nearbyStores: await fethNearbyStore(),
+        storesInView: await fethStoresInView()
     };
 }
 

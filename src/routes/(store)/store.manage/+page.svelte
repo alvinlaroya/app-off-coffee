@@ -4,7 +4,11 @@
     import { toast } from "svelte-sonner";
     import { invalidateAll } from "$app/navigation";
     import { enhance, applyAction, deserialize } from "$app/forms";
-    import { useEventService, currentlyOpen } from "$lib/utils";
+    import {
+        useEventService,
+        currentlyOpen,
+        uploadCompressImage,
+    } from "$lib/utils";
     import { storageRestaurantUrl, days } from "$lib/constant";
     import {
         Card,
@@ -47,7 +51,12 @@
 
     export let data;
 
-    $: ({ myStore } = data);
+    $: ({ myStore, nearbyStores, storesInView } = data);
+
+    $: {
+        console.log("NEARBY STORES", nearbyStores);
+        console.log("STORES IN VIEW", storesInView);
+    }
 
     $: storeState = myStore ?? {
         name: "",
@@ -141,7 +150,8 @@
     const handleImageUpload = async (event) => {
         uploadingImage = true;
         const uniqueDate = `${new Date().getDate()}${new Date().getHours()}${new Date().getMinutes()}${new Date().getSeconds()}`;
-        const file = event.target.files[0];
+        const tempFile = event.target.files[0];
+        const file = await uploadCompressImage(tempFile);
         uploadedImage = storeState.image;
         const { data, error } = await $page.data.supabase.storage
             .from("restaurant-images")
@@ -161,7 +171,6 @@
             toast.error("Image Upload Failed!", {
                 description: error.message,
             });
-            storeState.image = null;
             uploadedImage = null;
             uploadingImage = false;
             uploadImageError.error = true;
@@ -235,9 +244,12 @@
     };
 
     $: openAndClosing = () => {
+        const currentDate = new Date();
+        const currentDay = currentDate.getDay();
+
         if (
-            !storeState?.operation_time?.opening &&
-            !storeState?.operation_time?.closing
+            !storeState?.operation_time[days[currentDay - 1]]?.opening &&
+            !storeState?.operation_time[days[currentDay - 1]]?.closing
         ) {
             return {
                 isOpen: false,
@@ -245,10 +257,11 @@
             };
         }
 
-        const currentDate = new Date();
-        const currentDay = currentDate.getDay();
-        const opening = storeState.operation_time[days[currentDay - 1]].opening;
-        const closing = storeState.operation_time[days[currentDay - 1]].closing;
+        const opening =
+            storeState?.operation_time[days[currentDay - 1]]?.opening;
+        const closing =
+            storeState?.operation_time[days[currentDay - 1]]?.closing;
+
         return {
             isOpen: currentlyOpen(opening, closing),
             closing,
@@ -493,6 +506,18 @@
             </div>
         </div>
     </div>
+</div>
+<div class="my-5 p-4 flex flex-col">
+    <h1 class="font-bold">Nearby Stores</h1>
+    {#each nearbyStores as store}
+        <span>{store?.name}</span>
+    {/each}
+</div>
+<div class="my-5 p-4 flex flex-col">
+    <h1 class="font-bold">Stores In View</h1>
+    {#each storesInView as store}
+        <span>{store?.name}</span>
+    {/each}
 </div>
 <Card class="w-full mt-6">
     <CardHeader>
