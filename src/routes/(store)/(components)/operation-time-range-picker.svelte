@@ -81,19 +81,21 @@
 </script>
 
 {#each Object.entries(value) as [key, val]}
-    <div class="grid gap-2 grid-cols-4 items-center pt-2">
-        <h1 class="text-xs font-semibold">
-            {key.toUpperCase()}
-        </h1>
-        <div class="flex items-center space-x-2">
-            <Switch
-                id="open-store"
-                bind:checked={value[key].open}
-                onCheckedChange={(e) => (value[key].open = e)}
-            />
-            <Label for="open-store"
-                >{value[key].open ? "OPEN" : "CLOSE"}</Label
-            >
+    <div class="grid gap-2 md:grid-cols-4 items-center pt-2 my-4 md:my-0">
+        <div class="flex justify-between items-center md:col-span-2">
+            <h1 class="text-xs font-semibold w-1/2 md:w-[5rem]">
+                {key.toUpperCase()}
+            </h1>
+            <div class="flex w-1/2 md:w-full justify-end md:justify-center items-center space-x-2">
+                <Switch
+                    id="open-store"
+                    bind:checked={value[key].open}
+                    onCheckedChange={(e) => (value[key].open = e)}
+                />
+                <Label for="open-store"
+                    >{value[key].open ? "OPEN" : "CLOSE"}</Label
+                >
+            </div>
         </div>
         <div>
             <Select
@@ -105,8 +107,7 @@
             >
                 <SelectTrigger>
                     <SelectValue
-                        placeholder={value[key]?.opening ??
-                            "Opening time"}
+                        placeholder={value[key]?.opening ?? "Opening time"}
                     />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
@@ -120,7 +121,7 @@
             </Select>
         </div>
         <div class="flex items-center">
-            <span class="mr-2">-</span>
+            <span class="hidden md:flex mr-2">-</span>
             <Select
                 selected={{
                     value: value[key].closing,
@@ -130,8 +131,7 @@
             >
                 <SelectTrigger>
                     <SelectValue
-                        placeholder={value[key]?.closing ??
-                            "Closing time"}
+                        placeholder={value[key]?.closing ?? "Closing time"}
                     />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">

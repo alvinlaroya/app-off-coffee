@@ -77,24 +77,27 @@
         const b = values.indexOf(operationTime[day].closing);
         const result = values.splice(a, b - a + 1);
         return result; */
-        return values
+        return values;
     };
 </script>
 
 {#each Object.entries(value) as [key, val]}
-    <div class="grid gap-2 grid-cols-4 items-center pt-2">
-        <h1 class="text-xs font-semibold">
+    <div
+        class="grid gap-2 grid-cols-4 items-center pt-2 my-4 md:my-0 w-full md:w-[70%]"
+    >
+        <h1 class="text-xs font-semibold col-span-4 md:col-span-2">
             {key.toUpperCase()}
         </h1>
-        <div>
+        <div class="col-span-2 md:col-span-1">
             <Select
                 selected={{
                     value: value[key].from,
                 }}
                 onSelectedChange={(e) => (value[key].from = e.value)}
+                disabled={!operationTime[key].open}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder={value[key]?.from ?? "From"} />
+                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key].open ? "Closed" : "From")} />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>
@@ -106,16 +109,17 @@
                 </SelectContent>
             </Select>
         </div>
-        <div class="flex items-center">
+        <div class="flex items-center col-span-2 md:col-span-1">
             <span class="mr-2">-</span>
             <Select
                 selected={{
                     value: value[key].to,
                 }}
                 onSelectedChange={(e) => (value[key].to = e.value)}
+                disabled={!operationTime[key].open}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder={value[key]?.to ?? "To"} />
+                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key].open ? "Closed" : "To")} />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>

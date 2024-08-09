@@ -19,7 +19,6 @@
 >
 	<Button
 		href="auth/signup"
-		variant="ghost"
 		class="relative md:absolute right-4 top-4 md:right-8 md:top-8"
 	>
 		Signup
@@ -48,9 +47,9 @@
 			</blockquote>
 		</div>
 	</div>
-	<div class="p-8">
+	<div class="p-0">
 		<div
-			class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] mt-[40%]"
+			class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] mt-[50%] lg:mt-[5%]"
 		>
 			<div class="flex flex-col space-y-2 text-center">
 				<h1 class="text-2xl font-semibold tracking-tight">

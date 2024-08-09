@@ -13,7 +13,7 @@ export const actions: Actions = {
         await supabase
             .from('profiles')
             .insert([
-                { user_id: data?.user?.id, email },
+                { id: data?.user?.id, email },
             ])
 
         if (error) {
