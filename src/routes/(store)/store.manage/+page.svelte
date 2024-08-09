@@ -244,16 +244,6 @@
     };
 
     $: openAndClosing = () => {
-        if (
-            !storeState?.operation_time?.opening &&
-            !storeState?.operation_time?.closing
-        ) {
-            return {
-                isOpen: false,
-                closing: null,
-            };
-        }
-
         const currentDate = new Date();
         const currentDay = currentDate.getDay();
 
