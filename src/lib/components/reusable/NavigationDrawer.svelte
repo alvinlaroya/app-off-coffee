@@ -120,20 +120,14 @@
             </nav>
         </div>
         <div class="absolute w-full bottom-0 flex px-5 py-2">
-            {#if expandedSidenav}
-                <Button class="w-full" on:click={() => dispatch("logout")}>
-                    <LogOut class="mr-2 h-4 w-4" />
-                    <span>Logout</span>
-                </Button>
-            {:else}
-                <Button
-                    class="w-full"
-                    size="icon"
-                    on:click={() => dispatch("logout")}
-                >
-                    <LogOut class="mr-2 h-4 w-4" />
-                </Button>
-            {/if}
+            <Button
+                class="w-full"
+                size="icon"
+                on:click={() => dispatch("logout")}
+            >
+                <LogOut class="mr-2 h-4 w-4" />
+                {expandedSidenav ? "Logout" : ""}
+            </Button>
         </div>
     </div>
 </div>
