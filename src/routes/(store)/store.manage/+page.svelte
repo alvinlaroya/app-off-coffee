@@ -293,17 +293,6 @@
                                 >Fill out the form to add details on your store.</CardDescription
                             >
                         </div>
-                        <div class="flex flex-col items-end space-y-2">
-                            <Label for="open-store"
-                                >{storeState.is_open_today ? "OPEN" : "CLOSE"} TODAY</Label
-                            >
-                            <Switch
-                                id="open-store"
-                                bind:checked={storeState.is_open_today}
-                                onCheckedChange={(e) =>
-                                    updateOpenCloseHandler(e)}
-                            />
-                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -431,7 +420,7 @@
     </div>
 
     <div
-        class="relative lg:sticky mt-5 lg:mt-0 top-0 col-span-3 lg:col-span-1 order-1 lg:order-2"
+        class="relative lg:sticky mt-3 lg:mt-0 top-0 col-span-3 lg:col-span-1 order-1 lg:order-2"
         class:lg:top-[70px]={uploadImageError.error}
         class:lg:top-[100px]={!uploadImageError.error}
         style="align-self: flex-start"
@@ -552,3 +541,20 @@
         {/if}
     </CardContent>
 </Card>
+
+<div
+    class="fixed bottom-5 right-5 flex items-center space-x-4 bg-white p-3 rounded-full shadow-md border border-gray"
+>
+    {#if isLoading}
+        <LoaderCircle color="#000000" class="animate-spin" />
+    {:else}
+        <Switch
+            id="open-store"
+            bind:checked={storeState.is_open_today}
+            onCheckedChange={(e) => updateOpenCloseHandler(e)}
+        />
+    {/if}
+    <Label for="open-store"
+        >{storeState.is_open_today ? "OPEN" : "CLOSE"} TODAY</Label
+    >
+</div>

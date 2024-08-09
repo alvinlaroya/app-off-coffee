@@ -40,7 +40,7 @@ export const actions: Actions = {
         await supabase
             .from('profiles')
             .update({ fname, lname, avatar })
-            .eq('user_id', data.user.id)
+            .eq('id', data.user.id)
 
 
         if (error) {
