@@ -11,12 +11,14 @@ export const actions: Actions = {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
+        redirectTo: 'http://example.com/auth/callback',
       },
-    });
+    })
+    
+    if (data.url) {
+      redirect(303, data.url) // use the redirect API for your server framework
+    }
+    
 
     console.log("LOGIN WITH GOOGLE")
 
