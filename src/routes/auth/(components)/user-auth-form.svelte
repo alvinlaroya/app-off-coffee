@@ -111,9 +111,10 @@
     </div>
     <Button
         variant="outline"
-        type="button"
-        class="bg-[#0165E1] text-white  "
+        type="submit"
+        class="bg-[#0165E1] text-white"
         disabled={isLoading}
+        formaction="?/loginWithGoogle"
     >
         {#if isLoading}
             <!-- <Icons.spinner class="mr-2 h-4 w-4 animate-spin" /> -->
@@ -121,6 +122,6 @@
         {:else}
             <Facebook class="mr-2 h-4 w-4" />
         {/if}
-        Facebook
+        Google
     </Button>
 </div>
