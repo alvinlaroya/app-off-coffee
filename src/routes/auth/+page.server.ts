@@ -8,7 +8,20 @@ export const actions: Actions = {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    console.log("LOGIN WITH GOOGLE")
+
+
+    /* const { error } = await supabase.auth.signInWithPassword({ email, password }) */
     if (error) {
       console.error(error)
       redirect(303, '/auth/error')
@@ -16,4 +29,7 @@ export const actions: Actions = {
       redirect(303, '/store.dashboard')
     }
   },
+  loginWithGoogle: async () => {
+    console.log("HAHAHA")
+  }
 }
