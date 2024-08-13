@@ -7,7 +7,7 @@
     import { Label } from "$lib/components/ui/label";
     import { cn } from "$lib/utils.js";
 
-    import { LoaderCircle, Facebook, Mail } from "lucide-svelte";
+    import { LoaderCircle, Facebook, Mail, Github, LogIn } from "lucide-svelte";
 
     let className = undefined;
     export { className as class };
@@ -81,9 +81,9 @@
                     {#if isLoading}
                         <LoaderCircle color="#eab676" class="animate-spin" />
                     {:else}
-                        <Mail class="mr-2 h-4 w-4" />
+                        <LogIn class="mr-2 h-4 w-4" />
                     {/if}
-                    <span class="ml-3">Sign In with Email</span>
+                    <span class="ml-3">Login</span>
                 </Button>
             {:else}
                 <Button
@@ -109,19 +109,51 @@
             </span>
         </div>
     </div>
-    <Button
-        variant="outline"
-        type="submit"
-        class="bg-[#0165E1] text-white"
-        disabled={isLoading}
-        formaction="?/loginWithGoogle"
-    >
-        {#if isLoading}
-            <!-- <Icons.spinner class="mr-2 h-4 w-4 animate-spin" /> -->
-            <h1>Loading</h1>
-        {:else}
-            <Facebook class="mr-2 h-4 w-4" />
-        {/if}
-        Google
-    </Button>
+    <form method="POST" class="grid grid-cols-3">
+        <Button
+            variant="outline"
+            type="submit"
+            class="bg-[#0165E1] text-white  "
+            disabled={isLoading}
+            formaction="?/login&provider=facebook"
+        >
+            {#if isLoading}
+                <!-- <Icons.spinner class="mr-2 h-4 w-4 animate-spin" /> -->
+                <h1>Loading</h1>
+            {:else}
+                <Facebook class="mr-2 h-4 w-4" />
+            {/if}
+            Facebook
+        </Button>
+        <Button
+            variant="outline"
+            type="submit"
+            class="bg-black text-white  "
+            disabled={isLoading}
+            formaction="?/login&provider=github"
+        >
+            {#if isLoading}
+                <!-- <Icons.spinner class="mr-2 h-4 w-4 animate-spin" /> -->
+                <h1>Loading</h1>
+            {:else}
+                <Github class="mr-2 h-4 w-4" />
+            {/if}
+            Github
+        </Button>
+        <Button
+            variant="outline"
+            type="submit"
+            class="bg-white text-black"
+            disabled={isLoading}
+            formaction="?/login&provider=github"
+        >
+            {#if isLoading}
+                <!-- <Icons.spinner class="mr-2 h-4 w-4 animate-spin" /> -->
+                <h1>Loading</h1>
+            {:else}
+                <img src="https://supabase.com/dashboard/img/icons/apple-icon.svg" class="h-5 w-5 mr-2" alt="">
+            {/if}
+            Apple ID
+        </Button>
+    </form>
 </div>

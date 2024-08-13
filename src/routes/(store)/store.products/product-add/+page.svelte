@@ -22,18 +22,24 @@
 
     import { Upload } from "lucide-svelte";
 
+    export let data;
+    $: ({ categories } = data);
+
     let previewImage;
 
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
         previewImage = URL.createObjectURL(file);
     };
+
+    let category;
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
     <Card class="w-full col-span-2">
         <CardHeader>
             <CardTitle>Add New Product</CardTitle>
+            {category}
             <CardDescription
                 >Fill out the form to add a new product.</CardDescription
             >
@@ -53,16 +59,6 @@
                     />
                 </div>
                 <div class="grid gap-2">
-                    <Label htmlFor="name">Product Name</Label>
-                    <Input id="name" placeholder="Enter product name" />
-                </div>
-                <div class="grid gap-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                        id="description"
-                        placeholder="Enter product description"
-                        class="min-h-[120px]"
-                    />
                     <div class="grid sm:grid-cols-2 gap-2">
                         <div class="grid gap-2">
                             <Label htmlFor="price">Price</Label>
@@ -81,19 +77,9 @@
                                     />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="electronics"
-                                        >Electronics</SelectItem
-                                    >
-                                    <SelectItem value="clothing"
-                                        >Clothing</SelectItem
-                                    >
-                                    <SelectItem value="home">Home</SelectItem>
-                                    <SelectItem value="sports"
-                                        >Sports</SelectItem
-                                    >
-                                    <SelectItem value="beauty"
-                                        >Beauty</SelectItem
-                                    >
+                                     {#each categories as category}
+                                        <SelectItem value={category.id}>{category.name}</SelectItem>
+                                    {/each}
                                 </SelectContent>
                             </Select>
                         </div>

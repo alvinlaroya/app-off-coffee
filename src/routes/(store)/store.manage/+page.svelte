@@ -2,7 +2,7 @@
     //@ts-nocheck
     import { page } from "$app/stores";
     import { toast } from "svelte-sonner";
-    import { invalidateAll } from "$app/navigation";
+    import { invalidateAll, goto } from "$app/navigation";
     import { enhance, applyAction, deserialize } from "$app/forms";
     import {
         useEventService,
@@ -18,6 +18,7 @@
         CardContent,
         CardFooter,
     } from "$lib/components/ui/card";
+    import * as Table from "$lib/components/ui/table/index.js";
     import { Label } from "$lib/components/ui/label";
     import { Switch } from "$lib/components/ui/switch";
     import { Input } from "$lib/components/ui/input";
@@ -51,7 +52,7 @@
 
     export let data;
 
-    $: ({ myStore, nearbyStores, storesInView } = data);
+    $: ({ myStore, nearbyStores, storesInView, recentProducts } = data);
 
     $: {
         console.log("NEARBY STORES", nearbyStores);
@@ -146,6 +147,51 @@
     let uploadedImage = null;
     let uploadingImage = false;
     let uploadImageError = {};
+
+    const invoices = [
+        {
+            invoice: "INV001",
+            paymentStatus: "Paid",
+            totalAmount: "$250.00",
+            paymentMethod: "Credit Card",
+        },
+        {
+            invoice: "INV002",
+            paymentStatus: "Pending",
+            totalAmount: "$150.00",
+            paymentMethod: "PayPal",
+        },
+        {
+            invoice: "INV003",
+            paymentStatus: "Unpaid",
+            totalAmount: "$350.00",
+            paymentMethod: "Bank Transfer",
+        },
+        {
+            invoice: "INV004",
+            paymentStatus: "Paid",
+            totalAmount: "$450.00",
+            paymentMethod: "Credit Card",
+        },
+        {
+            invoice: "INV005",
+            paymentStatus: "Paid",
+            totalAmount: "$550.00",
+            paymentMethod: "PayPal",
+        },
+        {
+            invoice: "INV006",
+            paymentStatus: "Pending",
+            totalAmount: "$200.00",
+            paymentMethod: "Bank Transfer",
+        },
+        {
+            invoice: "INV007",
+            paymentStatus: "Unpaid",
+            totalAmount: "$300.00",
+            paymentMethod: "Credit Card",
+        },
+    ];
 
     const handleImageUpload = async (event) => {
         uploadingImage = true;
@@ -496,7 +542,57 @@
         </div>
     </div>
 </div>
-<div class="my-5 p-4 flex flex-col">
+<Card class="w-full mt-6">
+    <CardHeader>
+        <div class="flex justify-between">
+            <CardTitle>Recent Products</CardTitle>
+            <Button on:click={() => goto("/store.products")}>Show All</Button>
+        </div>
+    </CardHeader>
+    <CardContent>
+        <Table.Root>
+            <Table.Caption>A list of your recently added products.</Table.Caption>
+            <Table.Header>
+                <Table.Row>
+                    <Table.Head class="w-[100px]">Status</Table.Head>
+                    <Table.Head>Name</Table.Head>
+                    <Table.Head>Category</Table.Head>
+                    <Table.Head>Variants</Table.Head>
+                    <Table.Head class="text-right">Price</Table.Head>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {#each recentProducts as product, i (i)}
+                    <Table.Row>
+                        <Table.Cell class="font-medium"
+                            >{product.is_available
+                                ? "Available"
+                                : "Unavailable"}</Table.Cell
+                        >
+                        <Table.Cell>{product.name}</Table.Cell>
+                        <Table.Cell>
+                            <div class="flex flex-row space-x-2">
+                                {#each product.category as category}
+                                    <span
+                                        class="bg-black text-white px-2 py-1 rounded-full text-xs"
+                                        >{category}</span
+                                    >
+                                {/each}
+                            </div>
+                        </Table.Cell>
+                        <Table.Cell>
+                            {product.variants}
+                        </Table.Cell>
+                        <Table.Cell class="text-right"
+                            >₱{product.price.toFixed(2)}</Table.Cell
+                        >
+                    </Table.Row>
+                {/each}
+            </Table.Body>
+        </Table.Root>
+    </CardContent>
+</Card>
+<!-- <div class="my-5 p-4 flex flex-col">
     <h1 class="font-bold">Nearby Stores</h1>
     {#each nearbyStores as store}
         <span>{store?.name}</span>
@@ -507,7 +603,7 @@
     {#each storesInView as store}
         <span>{store?.name}</span>
     {/each}
-</div>
+</div> -->
 <Card class="w-full mt-6">
     <CardHeader>
         <CardTitle>Store Activation</CardTitle>
@@ -543,7 +639,7 @@
 </Card>
 
 <div
-    class="fixed bottom-5 right-5 flex items-center space-x-4 bg-white p-3 rounded-full shadow-md border border-gray"
+    class="fixed bottom-0 right-0 md:bottom-5 md:right-5 w-full md:w-auto flex items-center space-x-4 bg-white p-3 md:rounded-full shadow-lg md:shadow-md border border-gray"
 >
     {#if isLoading}
         <LoaderCircle color="#000000" class="animate-spin" />
