@@ -76,7 +76,6 @@
     });
 </script>
 
-<pre>{JSON.stringify(store.location)}</pre>
 
 <main class="relative">
     <img
