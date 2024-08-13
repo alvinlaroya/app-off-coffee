@@ -46,10 +46,25 @@ export const load = async ({ locals: { supabase } }) => {
         }
     }
 
+    const fetchRecentProducts = async () => {
+        const restaurant = await fetchMyStore();
+
+        const { data, error } = await supabase.rpc('get_all_recent_products_under_restaurant', {
+            store_id: restaurant.id
+        })
+
+        if (error) {
+            console.error(error)
+        } else {
+            return data ?? {}
+        }
+    }
+
     return {
         myStore: await fetchMyStore(),
         nearbyStores: await fethNearbyStore(),
-        storesInView: await fethStoresInView()
+        storesInView: await fethStoresInView(),
+        recentProducts: await fetchRecentProducts(),
     };
 }
 

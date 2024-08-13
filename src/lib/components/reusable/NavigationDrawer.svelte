@@ -91,9 +91,15 @@
                     <a
                         href={navigation.link}
                         data-sveltekit-preload-data="tap"
-                        class="flex md:grid lg:flex items-center rounded-lg px-3 py-3 text-gray transition-all hover:text-primary"
+                        class="flex md:grid lg:flex items-center rounded-lg px-3 py-3 text-gray transition-all"
                         class:gap-3={expandedSidenav}
-                        class:bg-gray-300={`${groupName}${navigation.link}` ===
+                        class:hover:bg-gray-100={`${groupName}${navigation.link}` !==
+                            $page.route.id}
+                        class:hover:text-white={`${groupName}${navigation.link}` ===
+                            $page.route.id}
+                        class:bg-[#A67B5B]={`${groupName}${navigation.link}` ===
+                            $page.route.id}
+                        class:text-white={`${groupName}${navigation.link}` ===
                             $page.route.id}
                         class:disabled={!$page.data.user.user_metadata?.fname &&
                             navigation.link !== "/store.account"}
