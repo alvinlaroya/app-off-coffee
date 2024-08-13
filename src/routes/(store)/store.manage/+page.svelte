@@ -40,6 +40,8 @@
     import PeakHoursPicker from "../(components)/peak-hours-picker.svelte";
     import AdvancedTelInput from "$lib/components/reusable/AdvancedTelInput.svelte";
 
+    import LeafletMap from "$lib/components/reusable/LeafletMap.svelte";
+
     import {
         Upload,
         Store,
@@ -147,6 +149,8 @@
     let uploadedImage = null;
     let uploadingImage = false;
     let uploadImageError = {};
+
+    let location;
 
     const invoices = [
         {
@@ -425,6 +429,13 @@
                             on:change={handleImageUpload}
                         />
                     </form>
+                    <div class="p-0">
+                        <h1 class="font-semibold mb-3">
+                            Set up your store location
+                        </h1>
+                        <pre>{JSON.stringify(location)}</pre>
+                        <LeafletMap store={storeState} bind:value={location} />
+                    </div>
                 </CardContent>
                 <CardFooter>
                     <div class="flex justify-end w-full">
@@ -551,7 +562,9 @@
     </CardHeader>
     <CardContent>
         <Table.Root>
-            <Table.Caption>A list of your recently added products.</Table.Caption>
+            <Table.Caption
+                >A list of your recently added products.</Table.Caption
+            >
             <Table.Header>
                 <Table.Row>
                     <Table.Head class="w-[100px]">Status</Table.Head>
