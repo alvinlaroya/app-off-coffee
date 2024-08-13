@@ -433,7 +433,7 @@
                         <h1 class="font-semibold mb-3">
                             Set up your store location
                         </h1>
-                        <pre>{JSON.stringify(location)}</pre>
+                        <!-- <pre>{JSON.stringify(location)}</pre> -->
                         <LeafletMap store={storeState} bind:value={location} />
                     </div>
                 </CardContent>
