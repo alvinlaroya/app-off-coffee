@@ -488,9 +488,9 @@
                 <div class="flex space-x-2 items-center">
                     <Clock class="w-4 h-4" />
                     <p class="text-sm">
-                        <span class="text-green-800"
+                        <!-- <span class="text-green-800"
                             >{openAndClosing().isOpen ? "Open" : "Closed"}
-                        </span>⋅ Closes {openAndClosing().closing}
+                        </span>⋅ Closes {openAndClosing().closing} -->
                     </p>
                 </div>
                 <div class="flex space-x-2 items-center">
