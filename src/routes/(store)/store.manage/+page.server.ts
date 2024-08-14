@@ -34,10 +34,13 @@ export const load = async ({ locals: { supabase } }) => {
     const fetchMyStore = async () => {
         const { data: { user } } = await supabase.auth.getUser()
 
-        let { data: stores, error } = await supabase
-            .from('stores')
-            .select("*")
-            .eq('owner_id', user.id)
+        console.log("USER", user)
+
+        let { data: stores, error } = await supabase.rpc("get_store_detail", {
+            store_owner_id: user?.id
+        })
+
+        console.log("RESTO", stores)
 
         if (error) {
             console.error(error)
@@ -48,6 +51,8 @@ export const load = async ({ locals: { supabase } }) => {
 
     const fetchRecentProducts = async () => {
         const restaurant = await fetchMyStore();
+
+        if (!restaurant?.id) return []
 
         const { data, error } = await supabase.rpc('get_all_recent_products_under_restaurant', {
             store_id: restaurant.id
@@ -82,7 +87,7 @@ export const actions: Actions = {
                     name,
                     description,
                     address,
-                    location,
+                    location: `POINT(${location.long} ${location.lat})`, 
                     rating,
                     followers,
                     operation_time,
@@ -99,7 +104,7 @@ export const actions: Actions = {
 
 
         if (error) {
-            console.error(error)
+            console.error("Error adding store", error)
             redirect(303, '/auth/error')
         } else {
             return { store: data ?? {} };
@@ -109,15 +114,21 @@ export const actions: Actions = {
         const formData = await request.json()
         const { data: { user } } = await supabase.auth.getUser()
 
+        delete formData['lat'];
+        delete formData['long'];
+
         const { data, error } = await supabase
             .from('stores')
-            .update(formData)
+            .update({
+                ...formData,
+                location: `POINT(${formData.location.long} ${formData.location.lat})`
+            })
             .eq('id', formData.id)
             .select()
 
 
         if (error) {
-            console.error(error)
+            console.error("Error updating store", error)
             redirect(303, '/auth/error')
         } else {
             return { store: data ?? {} };

@@ -3,18 +3,12 @@
     import { onMount, onDestroy } from "svelte";
     import { storageRestaurantUrl, days } from "$lib/constant";
 
-    export let store = "";
+    export let store;
 
     export let value;
     let leaflet;
     let mapElement;
     let map;
-    let centerLocation = {
-        lat: "",
-        lng: "",
-    };
-
-    $: value = centerLocation;
 
     onMount(async () => {
         leaflet = await import("leaflet");
@@ -30,16 +24,28 @@
     }
 
     async function showPosition(position) {
-        centerLocation.lat = position.coords.latitude;
-        centerLocation.lng = position.coords.longitude;
-        value = {
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
-        };
-        const location = {
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
-        };
+        let location = {};
+        if (store?.lat && store?.long) {
+            location = {
+                lat: store.lat,
+                long: store.long,
+            };
+
+            value = {
+                lat: store.lat,
+                long: store.long,
+            };
+        } else {
+            location = {
+                lat: position.coords.latitude,
+                long: position.coords.longitude,
+            };
+
+            value = {
+                lat: position.coords.latitude,
+                long: position.coords.longitude,
+            };
+        }
 
         map = leaflet
             .map(mapElement)
@@ -57,12 +63,14 @@
             .bindPopup(`${store.name}`)
             .openPopup();
 
+        map.scrollWheelZoom.disable();
+
         map.on("drag", draggingMap);
     }
 
     const draggingMap = () => {
-        centerLocation.lat = map.getCenter().lat;
-        centerLocation.lng = map.getCenter().lng;
+        value.lat = map.getCenter().lat;
+        value.long = map.getCenter().lng;
     };
 
     let mapHeight;
@@ -75,7 +83,6 @@
         }
     });
 </script>
-
 
 <main class="relative">
     <img

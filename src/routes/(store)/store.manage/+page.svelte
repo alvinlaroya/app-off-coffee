@@ -56,16 +56,14 @@
 
     $: ({ myStore, nearbyStores, storesInView, recentProducts } = data);
 
-    $: {
-        console.log("NEARBY STORES", nearbyStores);
-        console.log("STORES IN VIEW", storesInView);
-    }
-
     $: storeState = myStore ?? {
         name: "",
         description: "",
         address: "",
-        location: {},
+        location: {
+            lat: null,
+            long: null,
+        },
         rating: 0,
         followers: 0,
         operation_time: {
@@ -149,53 +147,6 @@
     let uploadedImage = null;
     let uploadingImage = false;
     let uploadImageError = {};
-
-    let location;
-
-    const invoices = [
-        {
-            invoice: "INV001",
-            paymentStatus: "Paid",
-            totalAmount: "$250.00",
-            paymentMethod: "Credit Card",
-        },
-        {
-            invoice: "INV002",
-            paymentStatus: "Pending",
-            totalAmount: "$150.00",
-            paymentMethod: "PayPal",
-        },
-        {
-            invoice: "INV003",
-            paymentStatus: "Unpaid",
-            totalAmount: "$350.00",
-            paymentMethod: "Bank Transfer",
-        },
-        {
-            invoice: "INV004",
-            paymentStatus: "Paid",
-            totalAmount: "$450.00",
-            paymentMethod: "Credit Card",
-        },
-        {
-            invoice: "INV005",
-            paymentStatus: "Paid",
-            totalAmount: "$550.00",
-            paymentMethod: "PayPal",
-        },
-        {
-            invoice: "INV006",
-            paymentStatus: "Pending",
-            totalAmount: "$200.00",
-            paymentMethod: "Bank Transfer",
-        },
-        {
-            invoice: "INV007",
-            paymentStatus: "Unpaid",
-            totalAmount: "$300.00",
-            paymentMethod: "Credit Card",
-        },
-    ];
 
     const handleImageUpload = async (event) => {
         uploadingImage = true;
@@ -430,11 +381,13 @@
                         />
                     </form>
                     <div class="p-0">
-                        <h1 class="font-semibold mb-3">
+                        <h1 class="font-semibold mt-5 mb-3">
                             Set up your store location
                         </h1>
-                        <!-- <pre>{JSON.stringify(location)}</pre> -->
-                        <LeafletMap store={storeState} bind:value={location} />
+                        <LeafletMap
+                            store={storeState}
+                            bind:value={storeState.location}
+                        />
                     </div>
                 </CardContent>
                 <CardFooter>
@@ -562,7 +515,9 @@
     </CardHeader>
     <CardContent>
         <Table.Root>
-            <Table.Caption>A list of your recently added products.</Table.Caption>
+            <Table.Caption
+                >A list of your recently added products.</Table.Caption
+            >
             <Table.Header>
                 <Table.Row>
                     <Table.Head class="w-[100px]">Status</Table.Head>
