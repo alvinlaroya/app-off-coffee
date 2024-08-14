@@ -94,10 +94,10 @@
                     value: value[key].from,
                 }}
                 onSelectedChange={(e) => (value[key].from = e.value)}
-                disabled={!operationTime[key].open}
+                disabled={!operationTime[key]?.open}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key].open ? "Closed" : "From")} />
+                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key]?.open ? "Closed" : "From")} />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>
@@ -116,10 +116,10 @@
                     value: value[key].to,
                 }}
                 onSelectedChange={(e) => (value[key].to = e.value)}
-                disabled={!operationTime[key].open}
+                disabled={!operationTime[key]?.open}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key].open ? "Closed" : "To")} />
+                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key]?.open ? "Closed" : "To")} />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>
