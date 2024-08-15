@@ -66,19 +66,24 @@
                                 id="price"
                                 type="number"
                                 placeholder="Enter price"
+                                on:keydown={(e) => console.log(e.currentTarget.value)}
                             />
                         </div>
                         <div class="grid gap-2">
                             <Label htmlFor="category">Category</Label>
-                            <Select>
+                            <Select
+                                onSelectedChange={(e) => (category = e.value)}
+                            >
                                 <SelectTrigger>
                                     <SelectValue
                                         placeholder="Select category"
                                     />
                                 </SelectTrigger>
                                 <SelectContent>
-                                     {#each categories as category}
-                                        <SelectItem value={category.id}>{category.name}</SelectItem>
+                                    {#each categories as category}
+                                        <SelectItem value={category.id}
+                                            >{category.name}</SelectItem
+                                        >
                                     {/each}
                                 </SelectContent>
                             </Select>

@@ -28,7 +28,9 @@
 
     export let data;
 
-    $: ({ myStore } = data);
+    $: ({
+        profile: { stores },
+    } = data);
 
     let isLoading = false;
 
@@ -90,7 +92,7 @@
                                 class="text-primary-foreground text-sm flex items-center"
                             >
                                 <Store class="h-4 w-4 mr-1" />
-                                {myStore?.name ?? ""} Owner
+                                {stores[0]?.name ?? "Coffee Shop"} Owner
                             </div>
                         </div>
                     </div>

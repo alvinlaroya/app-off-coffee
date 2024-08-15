@@ -2,25 +2,26 @@ import { redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
 
-export const load = async ({ locals: { supabase } }) => {
+export const load = async ({ locals: { supabase, session } }) => {
 
-    const fetchMyStore = async () => {
-        const { data: { user } } = await supabase.auth.getUser()
+    const fetchProfile = async () => {
+        let { data, error } = await supabase
+            .from('profiles')
+            .select(`id, fname, lname, email, avatar, roles (id), stores (name)`)
+            .eq('id', session?.user.id)
 
-        let { data: stores, error } = await supabase
-            .from('stores')
-            .select("name")
-            .eq('owner_id', user.id)
+
+        console.log("PROPFILE", data)
 
         if (error) {
             console.error(error)
         } else {
-            return stores[0] ?? {}
+            return data[0] ?? {}
         }
     }
 
     return {
-        myStore: await fetchMyStore()
+        profile: await fetchProfile()
     };
 }
 

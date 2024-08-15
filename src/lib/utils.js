@@ -80,11 +80,11 @@ export const useEventService = async (obj, action) => {
 
 export const currentlyOpen = (opening, closing) => {
 	const currentTime = new Date().getHours();
-	const formattedOpening = Number(opening.split(':')[0])
-	const formattedClosing = Number(closing.split(':')[0])
+	const formattedOpening = Number(opening?.split(':')[0])
+	const formattedClosing = Number(closing?.split(':')[0])
 
-	const openingTime = opening.split(':00 ')[1] === 'PM' ? formattedOpening + 12 : formattedOpening
-	const closingTime = closing.split(':00 ')[1] === 'PM' ? formattedClosing + 12 : formattedClosing
+	const openingTime = opening?.split(':00 ')[1] === 'PM' ? formattedOpening + 12 : formattedOpening
+	const closingTime = closing?.split(':00 ')[1] === 'PM' ? formattedClosing + 12 : formattedClosing
 
 	return openingTime <= currentTime && currentTime <= closingTime
 }

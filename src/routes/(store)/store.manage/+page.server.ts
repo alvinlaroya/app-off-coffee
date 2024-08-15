@@ -1,8 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
-export const load = async ({ locals: { supabase } }) => {
-
+export const load = async ({ locals: { supabase, session } }) => {
     const fethNearbyStore = async () => {
         const { data, error } = await supabase.rpc('nearby_stores', {
             lat: 120.6187539,
@@ -32,16 +31,10 @@ export const load = async ({ locals: { supabase } }) => {
     }
 
     const fetchMyStore = async () => {
-        const { data: { user } } = await supabase.auth.getUser()
-
-        console.log("USER", user)
-
         let { data: stores, error } = await supabase.rpc("get_store_detail", {
-            store_owner_id: user?.id
+            store_owner_id: session?.user.id
         })
-
-        console.log("RESTO", stores)
-
+        
         if (error) {
             console.error(error)
         } else {
@@ -50,25 +43,19 @@ export const load = async ({ locals: { supabase } }) => {
     }
 
     const fetchRecentProducts = async () => {
-        const restaurant = await fetchMyStore();
-
-        if (!restaurant?.id) return []
-
         const { data, error } = await supabase.rpc('get_all_recent_products_under_restaurant', {
-            store_id: restaurant.id
-        })
+            store_owner_id: session?.user.id
+        });
 
         if (error) {
             console.error(error)
         } else {
-            return data ?? {}
+            return data ?? []
         }
     }
 
     return {
         myStore: await fetchMyStore(),
-        nearbyStores: await fethNearbyStore(),
-        storesInView: await fethStoresInView(),
         recentProducts: await fetchRecentProducts(),
     };
 }
@@ -87,7 +74,7 @@ export const actions: Actions = {
                     name,
                     description,
                     address,
-                    location: `POINT(${location.long} ${location.lat})`, 
+                    location: `POINT(${location.long} ${location.lat})`,
                     rating,
                     followers,
                     operation_time,

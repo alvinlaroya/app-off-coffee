@@ -5,7 +5,7 @@
     import { PackagePlus } from "lucide-svelte";
 
     export let data;
-    $: ({ allProducts, categories } = data);
+    $: ({ allProducts } = data);
 </script>
 
 <div class="flex w-full">
@@ -19,9 +19,10 @@
             </Button>
         </div>
         <ul>
-            {#each allProducts.products as product}
+            <!-- {#each allProducts.products as product}
                 <li>{product.name}</li>
-            {/each}
+            {/each} -->
         </ul>
+        <pre>{JSON.stringify(allProducts)}</pre>
     </div>
 </div>

@@ -54,7 +54,7 @@
 
     export let data;
 
-    $: ({ myStore, nearbyStores, storesInView, recentProducts } = data);
+    $: ({ myStore, recentProducts } = data);
 
     $: storeState = myStore ?? {
         name: "",
@@ -249,8 +249,8 @@
         const currentDay = currentDate.getDay();
 
         if (
-            !storeState?.operation_time[days[currentDay - 1]]?.opening &&
-            !storeState?.operation_time[days[currentDay - 1]]?.closing
+            !storeState?.operation_time?.[days[currentDay - 1]]?.opening &&
+            !storeState?.operation_time?.[days[currentDay - 1]]?.closing
         ) {
             return {
                 isOpen: false,
@@ -488,19 +488,24 @@
                 <div class="flex space-x-2 items-center">
                     <Clock class="w-4 h-4" />
                     <p class="text-sm">
-                        <!-- <span class="text-green-800"
+                        <span class="text-green-800"
                             >{openAndClosing().isOpen ? "Open" : "Closed"}
-                        </span>⋅ Closes {openAndClosing().closing} -->
+                        </span>
+                        {#if openAndClosing()?.closing}
+                            <span>
+                                ⋅ Closes {openAndClosing().closing}
+                            </span>
+                        {/if}
                     </p>
                 </div>
                 <div class="flex space-x-2 items-center">
                     <MapPin class="w-4 h-4" />
                     <span class="text-sm"
-                        >{storeState?.address || "Store Address"}</span
+                        >{storeState?.address ?? "No Store Address"}</span
                     >
                 </div>
                 <div class="py-3 text-sm font-thin">
-                    {storeState.description}
+                    {storeState.description ?? "No Description"}
                 </div>
             </div>
         </div>
@@ -516,8 +521,10 @@
     <CardContent>
         <Table.Root>
             <Table.Caption
-                >A list of your recently added products.</Table.Caption
-            >
+                >{recentProducts.length > 0
+                    ? "A list of your recently added products."
+                    : "No added products yet"}
+            </Table.Caption>
             <Table.Header>
                 <Table.Row>
                     <Table.Head class="w-[100px]">Status</Table.Head>
@@ -558,18 +565,6 @@
         </Table.Root>
     </CardContent>
 </Card>
-<!-- <div class="my-5 p-4 flex flex-col">
-    <h1 class="font-bold">Nearby Stores</h1>
-    {#each nearbyStores as store}
-        <span>{store?.name}</span>
-    {/each}
-</div>
-<div class="my-5 p-4 flex flex-col">
-    <h1 class="font-bold">Stores In View</h1>
-    {#each storesInView as store}
-        <span>{store?.name}</span>
-    {/each}
-</div> -->
 <Card class="w-full mt-6">
     <CardHeader>
         <CardTitle>Store Activation</CardTitle>

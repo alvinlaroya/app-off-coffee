@@ -4,20 +4,16 @@ import type { Actions, PageServerLoad } from './$types'
 export const load = async ({ locals: { supabase, session } }) => {
 
     const fetchAllProducts = async () => {
-        const { data: restaurantdata } = await supabase.rpc('get_store_detail', {
-            owner_id: session?.user.id
-        })
-
         const { data, error } = await supabase.rpc('get_all_products_under_restaurant', {
-            store_id: restaurantdata[0].id
+            store_owner_id: '082f33a4-1dd6-45d7-9f3e-00d0b9517b0a'
         })
 
+        console.log("USER", session?.user.id)
 
         if (error) {
-            console.error("Error fetching all products under restaurant")
+            console.error("Error fetching all products under restaurant", error)
         } else {
             return {
-                restaurant: restaurantdata ?? {},
                 products: data ?? [],
             }
         }
