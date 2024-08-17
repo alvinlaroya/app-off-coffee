@@ -3,7 +3,7 @@
     import { page } from "$app/stores";
     import { toast } from "svelte-sonner";
     import { invalidateAll, goto } from "$app/navigation";
-    import { enhance, applyAction, deserialize } from "$app/forms";
+    import { enhance } from "$app/forms";
     import {
         useEventService,
         currentlyOpen,
@@ -542,19 +542,35 @@
                                 ? "Available"
                                 : "Unavailable"}</Table.Cell
                         >
-                        <Table.Cell>{product.name}</Table.Cell>
+                        <Table.Cell class="font-medium">{product.name}</Table.Cell>
                         <Table.Cell>
                             <div class="flex flex-row space-x-2">
-                                {#each product.category as category}
+                                {#each product?.category ?? [] as category}
                                     <span
-                                        class="bg-black text-white px-2 py-1 rounded-full text-xs"
+                                        class="bg-primary text-white text-xs w-auto px-2 py-0.5 rounded-full"
                                         >{category}</span
                                     >
                                 {/each}
                             </div>
                         </Table.Cell>
                         <Table.Cell>
-                            {product.variants}
+                            <div class="flex flex-row space-x-6">
+                                {#each product?.variants ?? [] as variant}
+                                    <div class="flex flex-col">
+                                        <span class="text-xs mb-1 -mt-4"
+                                            >{variant?.name}:</span
+                                        >
+                                        <div class="flex flex-row space-x-1">
+                                            {#each variant?.values ?? [] as value}
+                                                <span
+                                                    class="bg-primary text-white text-xs w-auto px-2 py-0.5 rounded-full"
+                                                    >{value.name}</span
+                                                >
+                                            {/each}
+                                        </div>
+                                    </div>
+                                {/each}
+                            </div>
                         </Table.Cell>
                         <Table.Cell class="text-right"
                             >₱{product.price.toFixed(2)}</Table.Cell

@@ -116,7 +116,6 @@ export const actions: Actions = {
 
         if (error) {
             console.error("Error updating store", error)
-            redirect(303, '/auth/error')
         } else {
             return { store: data ?? {} };
         }
@@ -134,7 +133,6 @@ export const actions: Actions = {
 
         if (error) {
             console.error(error)
-            redirect(303, '/auth/error')
         } else {
             return { store: data ?? {} };
         }
@@ -152,7 +150,6 @@ export const actions: Actions = {
 
         if (error) {
             console.error(error)
-            redirect(303, '/auth/error')
         } else {
             return { store: data ?? {} };
         }

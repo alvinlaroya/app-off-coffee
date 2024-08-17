@@ -14,9 +14,6 @@
 </script>
 
 <div class="grid gap-2 mt-3">
-    <div class="w-full flex-items-center p-3 bg-gray-700">
-        <Label htmlFor="image" class="text-white">Product Variants</Label>
-    </div>
     <div class="flex flex-col">
         {#each variants as variant, variant_idx}
             <div class="border-b border-dashed pb-2 my-2">
@@ -28,6 +25,7 @@
                         <Input
                             id="price"
                             type="text"
+                            placeholder="Ex. Size"
                             on:keydown={(e) =>
                                 console.log(e.currentTarget.value)}
                             bind:value={variant.name}
@@ -80,11 +78,12 @@
                                 class="flex w-full max-w-sm flex-col gap-1.5 my-2"
                             >
                                 <Label for="variant-nam" class="text-xs"
-                                    >{variant?.name ?? ""} Value</Label
+                                    >{variant?.name ?? ""} Variant</Label
                                 >
                                 <Input
                                     id="variant-name"
                                     type="text"
+                                    placeholder="Ex. Grande"
                                     bind:value={value.name}
                                 />
                             </div>
