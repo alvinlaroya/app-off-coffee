@@ -76,7 +76,7 @@
     export let operationTime = {};
 
     $: filteredPeakHours = Object.entries(value).filter(
-        (item, i) => operationTime[item[0]].open,
+        (item, i) => operationTime[item[0]]?.open,
     );
 </script>
 
