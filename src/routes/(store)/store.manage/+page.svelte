@@ -328,6 +328,20 @@
                                 {disabled}
                             />
                         </div>
+                        <div class="grid gap-2 pt-4">
+                            <Label htmlFor="name">Phone</Label>
+                            <AdvancedTelInput bind:value={storeState.phone} />
+                        </div>
+                        <div class="grid gap-2">
+                            <Label htmlFor="name">Website</Label>
+                            <Input
+                                id="website"
+                                name="website"
+                                placeholder="Enter Website"
+                                bind:value={storeState.website}
+                                {disabled}
+                            />
+                        </div>
                         <div class="grid gap-2">
                             <Accordion.Root class="w-full" value="item-1">
                                 <Accordion.Item value="item-1">
@@ -343,20 +357,6 @@
                                     </Accordion.Content>
                                 </Accordion.Item>
                             </Accordion.Root>
-                        </div>
-                        <div class="grid gap-2 pt-4">
-                            <Label htmlFor="name">Phone</Label>
-                            <AdvancedTelInput bind:value={storeState.phone} />
-                        </div>
-                        <div class="grid gap-2">
-                            <Label htmlFor="name">Website</Label>
-                            <Input
-                                id="website"
-                                name="website"
-                                placeholder="Enter Website"
-                                bind:value={storeState.website}
-                                {disabled}
-                            />
                         </div>
                         <div class="grid gap-2">
                             <Accordion.Root class="w-full" value="item-1">

@@ -1,5 +1,8 @@
 <script>
     //@ts-nocheck
+    import { slide } from "svelte/transition";
+    import { quintOut } from "svelte/easing";
+
     import { Label } from "$lib/components/ui/label";
     import {
         Select,
@@ -72,17 +75,19 @@
 
     export let operationTime = {};
 
-    const filteredTimeValues = (values, day) => {
-        /* const a = values.indexOf(operationTime[day].opening);
-        const b = values.indexOf(operationTime[day].closing);
-        const result = values.splice(a, b - a + 1);
-        return result; */
-        return values;
-    };
+    $: filteredPeakHours = Object.entries(value).filter(
+        (item, i) => operationTime[item[0]].open,
+    );
 </script>
 
-{#each Object.entries(value) as [key, val]}
+{#each filteredPeakHours as [key, val]}
     <div
+        transition:slide={{
+            delay: 40,
+            duration: 300,
+            easing: quintOut,
+            axis: "y",
+        }}
         class="grid gap-2 grid-cols-4 items-center pt-2 my-4 md:my-0 w-full md:w-[70%]"
     >
         <h1 class="text-xs font-semibold col-span-4 md:col-span-2">
@@ -97,12 +102,15 @@
                 disabled={!operationTime[key]?.open}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key]?.open ? "Closed" : "From")} />
+                    <SelectValue
+                        placeholder={value[key]?.from ??
+                            (!operationTime[key]?.open ? "Closed" : "From")}
+                    />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>
                         <SelectLabel>Opening time:</SelectLabel>
-                        {#each filteredTimeValues(timeValues, key) as time}
+                        {#each timeValues as time}
                             <SelectItem value={time}>{time}</SelectItem>
                         {/each}
                     </SelectGroup>
@@ -119,12 +127,15 @@
                 disabled={!operationTime[key]?.open}
             >
                 <SelectTrigger>
-                    <SelectValue placeholder={value[key]?.from ?? (!operationTime[key]?.open ? "Closed" : "To")} />
+                    <SelectValue
+                        placeholder={value[key]?.to ??
+                            (!operationTime[key]?.open ? "Closed" : "To")}
+                    />
                 </SelectTrigger>
                 <SelectContent class="h-60 overflow-auto">
                     <SelectGroup>
                         <SelectLabel>Closing time</SelectLabel>
-                        {#each filteredTimeValues(timeValues, key) as time}
+                        {#each timeValues as time}
                             <SelectItem value={time}>{time}</SelectItem>
                         {/each}
                     </SelectGroup>

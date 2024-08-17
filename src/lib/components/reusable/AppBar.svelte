@@ -69,7 +69,7 @@
                 <DropdownMenu.Item>Settings</DropdownMenu.Item>
                 <DropdownMenu.Item>Support</DropdownMenu.Item>
                 <DropdownMenu.Separator />
-                <DropdownMenu.Item on:click={logout}>Logout</DropdownMenu.Item>
+                <DropdownMenu.Item on:click={() => console.log("LOGOUT")}>Logout</DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>
     </div>
