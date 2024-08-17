@@ -2,8 +2,8 @@
     //@ts-nocheck
     import { Label } from "$lib/components/ui/label";
     import { Input } from "$lib/components/ui/input";
-
     import { Button } from "$lib/components/ui/button";
+    import { Switch } from "$lib/components/ui/switch";
 
     import { Plus, Trash } from "lucide-svelte";
 
@@ -19,9 +19,25 @@
             <div class="border-b border-dashed pb-2 my-2">
                 <div class="flex space-x-3 items-center">
                     <div class="flex w-full flex-col gap-1.5">
-                        <Label for="variant-nam" class="text-xs"
-                            >Variant Name</Label
-                        >
+                        <div class="flex space-x-4 items-center">
+                            <Label for="variant-name" class="text-xs"
+                                >Variant Name</Label
+                            >
+                            <span class="mx-5 -mt-1 text-gray-300">|</span>
+                            <div class="flex items-center space-x-4">
+                                <Switch
+                                    id="open-store"
+                                    bind:checked={variant.required}
+                                    onCheckedChange={(e) =>
+                                        (variant.required = e)}
+                                />
+                                <Label class="text-xs"
+                                    >{variant.required
+                                        ? "Required"
+                                        : "Optional"}</Label
+                                >
+                            </div>
+                        </div>
                         <Input
                             id="price"
                             type="text"
@@ -35,7 +51,7 @@
                     <Button
                         variant="destructive"
                         size="sm"
-                        class="mt-5"
+                        class="mt-6"
                         on:click={() =>
                             (variants = variants.filter(
                                 (_, i) => i !== variant_idx,
@@ -46,7 +62,7 @@
                     </Button>
                     <Button
                         variant="outline"
-                        class="mt-5"
+                        class="mt-6"
                         size="sm"
                         on:click={() =>
                             (variants = [
@@ -91,19 +107,30 @@
                             <div
                                 class="flex w-full max-w-sm flex-col gap-1.5 my-2"
                             >
-                                <Label for="variant-nam" class="text-xs"
-                                    >{value?.name ?? ""} Additional Price</Label
+                                <Label
+                                    for="variant-nam"
+                                    class="text-xs flex items-center "
                                 >
+                                    {value?.name ?? ""} Additional Price
+                                    <span
+                                        class="bg-primary ml-2 text-white text-[10px] px-2 py-0.5 rounded-full"
+                                    >
+                                        {value?.price
+                                            ? `+ ${value?.price}.00`
+                                            : `Free`}
+                                    </span>
+                                </Label>
                                 <Input
                                     id="price"
                                     type="number"
+                                    placeholder={value.price ?? "FREE"}
                                     bind:value={value.price}
                                 />
                             </div>
 
                             <Button
                                 variant="destructive"
-                                class="mt-8"
+                                class="mt-6"
                                 size="sm"
                                 on:click={() =>
                                     (variant.values = variant.values.filter(
@@ -115,7 +142,7 @@
                             </Button>
                             <Button
                                 variant="outline"
-                                class="mt-8"
+                                class="mt-6"
                                 size="sm"
                                 on:click={() =>
                                     (variants[variant_idx].values = [

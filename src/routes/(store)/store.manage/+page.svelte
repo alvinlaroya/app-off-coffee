@@ -39,6 +39,7 @@
     import OperationTimeRangePicker from "../(components)/operation-time-range-picker.svelte";
     import PeakHoursPicker from "../(components)/peak-hours-picker.svelte";
     import AdvancedTelInput from "$lib/components/reusable/AdvancedTelInput.svelte";
+    import CardPreview from "../(components)/card-preview.svelte";
 
     import LeafletMap from "$lib/components/reusable/LeafletMap.svelte";
 
@@ -442,39 +443,14 @@
                 <Alert.Description>{uploadImageError.desc}.</Alert.Description>
             </Alert.Root>
         {/if}
-        <div
-            class="flex flex-col justify-center w-full bg-white p-4 rounded-md shadow-sm"
+        <CardPreview
+            data={storeState}
+            {uploadedImage}
+            bucket="store"
+            loading={uploadingImage}
+            on:cameraClick={() => document.getElementById("image").click()}
         >
-            <div
-                class="w-full h-[18rem] overflow-hidden -mt-9 rounded-md grid bg-center bg-contain"
-                style="background-image: url('https://www.autopaintguard.com/wp-content/uploads/2018/03/placeholder-image10.jpg');"
-            >
-                {#if storeState?.image && !uploadingImage}
-                    <img
-                        src={uploadedImage
-                            ? uploadedImage
-                            : `${storageRestaurantUrl}${storeState.image}`}
-                        alt="Product Preview"
-                        class="rounded-md object-cover w-full h-full"
-                    />
-                {/if}
-            </div>
-            <div class="z-10 -mt-7">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    class="bg-gray-200 rounded-full border-4 border-white ml-3 h-14 w-14"
-                    on:click={() => document.getElementById("image").click()}
-                >
-                    {#if uploadingImage}
-                        <LoaderCircle color="#000000" class="animate-spin" />
-                    {:else}
-                        <Camera class="h-6 w-6" />
-                    {/if}
-                </Button>
-            </div>
-
-            <div class="py-3 flex flex-col -mt-3">
+            <svelte:fragment slot="body">
                 <div class="flex justify-between mb-4">
                     <h1 class="text-2xl font-semibold">
                         {storeState?.name || "Store Name"}
@@ -507,8 +483,8 @@
                 <div class="py-3 text-sm font-thin">
                     {storeState.description ?? "No Description"}
                 </div>
-            </div>
-        </div>
+            </svelte:fragment>
+        </CardPreview>
     </div>
 </div>
 <Card class="w-full mt-6">
@@ -542,7 +518,9 @@
                                 ? "Available"
                                 : "Unavailable"}</Table.Cell
                         >
-                        <Table.Cell class="font-medium">{product.name}</Table.Cell>
+                        <Table.Cell class="font-medium"
+                            >{product.name}</Table.Cell
+                        >
                         <Table.Cell>
                             <div class="flex flex-row space-x-2">
                                 {#each product?.category ?? [] as category}

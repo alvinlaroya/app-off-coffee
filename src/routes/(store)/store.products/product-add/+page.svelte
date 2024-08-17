@@ -17,6 +17,7 @@
     import { Label } from "$lib/components/ui/label";
     import { Input } from "$lib/components/ui/input";
     import { Textarea } from "$lib/components/ui/textarea";
+
     import {
         Select,
         SelectTrigger,
@@ -39,6 +40,7 @@
 
     import MultiVariantInput from "../../(components)/multi-variant-input.svelte";
     import MultipleSelect from "$lib/components/reusable/MultipleSelect.svelte";
+    import CardPreview from "../../(components)/card-preview.svelte";
 
     export let data;
     $: ({ categories } = data);
@@ -60,12 +62,17 @@
         upsell: [],
         variants: [
             {
-                name: "",
-                optional: true,
+                name: "Hot or Iced",
+                required: true,
                 values: [
                     {
-                        name: "",
-                        price: 0,
+                        name: "Iced",
+                        price: null,
+                        is_available: true,
+                    },
+                    {
+                        name: "Hot",
+                        price: null,
                         is_available: true,
                     },
                 ],
@@ -168,6 +175,13 @@
             image: "",
         };
     };
+
+    $: variantsPrice = product.variants
+        .map((item) => item.values)
+        .map((value) => [...value])[0]
+        .reduce((sum, cur) => sum + Number(cur.price) ?? 0, 0);
+
+    $: totalPrice = 1;
 </script>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -182,7 +196,7 @@
             <form class="grid gap-6" use:enhance method="POST">
                 <div class="rounded-md p-4 border">
                     <div
-                        class="w-full flex-items-center p-3 bg-gray-700 -mt-9 rounded-md"
+                        class="w-full flex-items-center p-3 bg-primary -mt-9 rounded-md"
                     >
                         <Label htmlFor="image" class="text-white"
                             >Product Details</Label
@@ -208,7 +222,7 @@
                     <div class="grid gap-2 my-5">
                         <div class="grid sm:grid-cols-2 gap-2">
                             <div class="grid gap-2">
-                                <Label htmlFor="price">Price</Label>
+                                <Label htmlFor="price">Minimum Price</Label>
                                 <Input
                                     id="price"
                                     type="number"
@@ -336,7 +350,7 @@
                 </div>
                 <div class="p-4 border rounded-md mt-3">
                     <div
-                        class="w-full flex-items-center p-3 bg-gray-700 -mt-9 rounded-md"
+                        class="w-full flex-items-center p-3 bg-primary -mt-9 rounded-md"
                     >
                         <Label htmlFor="image" class="text-white"
                             >Product Variants</Label
@@ -355,12 +369,17 @@
             >
         </CardFooter>
     </Card>
+
     <div
         class="relative lg:sticky mt-3 lg:mt-0 top-0 col-span-3 lg:col-span-1 order-1 lg:order-2"
         class:lg:top-[70px]={uploadImageError.error}
         class:lg:top-[100px]={!uploadImageError.error}
         style="align-self: flex-start"
     >
+        <!-- <div class="mb-10">
+            <pre>{JSON.stringify(product.variants)}</pre>
+            <pre>{JSON.stringify(variantsPrice)}</pre>
+        </div> -->
         {#if uploadImageError?.error}
             <Alert.Root variant="destructive" class="mb-9">
                 <CircleAlert class="h-4 w-4" />
@@ -368,63 +387,41 @@
                 <Alert.Description>{uploadImageError.desc}.</Alert.Description>
             </Alert.Root>
         {/if}
-        <div
-            class="flex flex-col justify-center w-full bg-white p-4 rounded-md shadow-sm"
+        <CardPreview
+            data={product}
+            {uploadedImage}
+            bucket="product"
+            loading={uploadingImage}
+            on:cameraClick={() =>
+                document.getElementById("file-upload").click()}
         >
-            <div
-                class="w-full h-[18rem] overflow-hidden -mt-9 rounded-md grid bg-center bg-contain"
-                style="background-image: url('https://www.autopaintguard.com/wp-content/uploads/2018/03/placeholder-image10.jpg');"
-            >
-                {#if product?.image && !uploadingImage}
-                    <img
-                        src={uploadedImage
-                            ? uploadedImage
-                            : `${storageProductUrl}${product.image}`}
-                        alt="Product Preview"
-                        class="rounded-md object-cover w-full h-full"
-                    />
-                {/if}
-            </div>
-            <div class="z-10 -mt-7">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    class="bg-gray-200 rounded-full border-4 border-white ml-3 h-14 w-14"
-                    on:click={() => document.getElementById("image").click()}
-                >
-                    {#if uploadingImage}
-                        <LoaderCircle color="#000000" class="animate-spin" />
-                    {:else}
-                        <Camera class="h-6 w-6" />
-                    {/if}
-                </Button>
-            </div>
-
-            <div class="pt-3 flex flex-col -mt-3">
-                <div class="flex justify-between mb-1">
-                    <h1 class="text-2xl font-semibold">
-                        {product?.name || "Product Name"}
-                    </h1>
-                    <span>4.3 (127)</span>
+            <svelte:fragment slot="body">
+                <div class="pt-3 flex flex-col -mt-3">
+                    <div class="flex justify-between mb-1">
+                        <h1 class="text-2xl font-semibold">
+                            {product?.name || "Product Name"}
+                        </h1>
+                        <span>4.3 (127)</span>
+                    </div>
+                    <span class="text-xl font-normal">
+                        ₱ {product?.price_added ?? "0"}.00
+                    </span>
+                    <span class="mt-2 text-sm font-thin">
+                        {product.description ?? "No Description"}</span
+                    >
                 </div>
-                <span class="text-xl font-normal">
-                    ₱ {product?.price ?? "0"}.00
-                </span>
-                <span class="mt-2 text-sm font-thin">
-                    {product.description ?? "No Description"}</span
-                >
-            </div>
-            <div class="pt-3 flex flex-col -mt-3">
-                <span class="text-sm mb-2">Category: </span>
-                <div class="flex space-x-2">
-                    {#each product?.category ?? [] as category}
-                        <span
-                            class="bg-primary text-white text-xs w-auto px-3 py-1 rounded-full"
-                            >{category.value}</span
-                        >
-                    {/each}
+                <div class="pt-3 flex flex-col -mt-3">
+                    <span class="text-sm mb-2">Category: </span>
+                    <div class="flex space-x-2">
+                        {#each product?.category ?? [] as category}
+                            <span
+                                class="bg-primary text-white text-xs w-auto px-3 py-1 rounded-full"
+                                >{category.value}</span
+                            >
+                        {/each}
+                    </div>
                 </div>
-            </div>
-        </div>
+            </svelte:fragment>
+        </CardPreview>
     </div>
 </div>
