@@ -37,6 +37,7 @@
         CircleAlert,
         Camera,
     } from "lucide-svelte";
+    import StarIcon from "$lib/components/icons/StarIcon.svelte";
 
     import MultiVariantInput from "../../(components)/multi-variant-input.svelte";
     import MultipleSelect from "$lib/components/reusable/MultipleSelect.svelte";
@@ -401,16 +402,24 @@
                         <h1 class="text-2xl font-semibold">
                             {product?.name || "Product Name"}
                         </h1>
-                        <span>4.3 (127)</span>
+                        <div class="flex items-center gap-0.5 ml-auto">
+                            <StarIcon class="w-5 h-5 fill-primary" />
+                            <StarIcon class="w-5 h-5 fill-primary" />
+                            <StarIcon class="w-5 h-5 fill-primary" />
+                            <StarIcon
+                                class="w-5 h-5 fill-muted stroke-muted-foreground"
+                            />
+                            <span class="ml-2">(4.3)</span>
+                        </div>
                     </div>
                     <span class="text-xl font-normal">
                         ₱ {product?.price_added ?? "0"}.00
                     </span>
-                    <span class="mt-2 text-sm font-thin">
-                        {product.description ?? "No Description"}</span
+                    <span class="mt-4 text-sm font-thin">
+                        {product?.description || "No Description"}</span
                     >
                 </div>
-                <div class="pt-3 flex flex-col -mt-3">
+                <div class="pt-3 flex flex-col mt-1">
                     <span class="text-sm mb-2">Category: </span>
                     <div class="flex space-x-2">
                         {#each product?.category ?? [] as category}
