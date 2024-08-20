@@ -23,6 +23,5 @@
                 <li>{product.name}</li>
             {/each} -->
         </ul>
-        <pre>{JSON.stringify(allProducts)}</pre>
     </div>
 </div>

@@ -33,7 +33,7 @@ export const load = async ({ locals: { supabase, session } }) => {
 export const actions: Actions = {
     addProduct: async ({ request, locals: { supabase } }) => {
 
-        interface Category {
+        interface CategoryAndUpsell {
             value: string;
             label: string;
             disabled: boolean;
@@ -57,20 +57,20 @@ export const actions: Actions = {
                     description,
                     price,
                     price_added,
-                    category: category.map((item: Category) => item?.value),
-                    upsell,
-                    variants,
-                    image,
-                    store_id: myStore.id
+                    category: category.map((item: CategoryAndUpsell) => item?.value),
+                    upsell: upsell.map((item: CategoryAndUpsell) => Number(item?.value)),
+                variants,
+                image,
+                store_id: myStore.id
                 }
             ])
             .select()
 
 
-        if (error) {
-            console.error("Error adding store", error)
-        } else {
-            return { store: data ?? {} };
-        }
+if (error) {
+    console.error("Error adding store", error)
+} else {
+    return { store: data ?? {} };
+}
     },
 }

@@ -487,7 +487,7 @@
         </CardPreview>
     </div>
 </div>
-<Card class="w-full mt-6">
+<Card class="mt-6">
     <CardHeader>
         <div class="flex justify-between">
             <CardTitle>Recent Products</CardTitle>
@@ -506,7 +506,6 @@
                     <Table.Head class="w-[100px]">Status</Table.Head>
                     <Table.Head>Name</Table.Head>
                     <Table.Head>Category</Table.Head>
-                    <Table.Head>Variants</Table.Head>
                     <Table.Head class="text-right">Price</Table.Head>
                 </Table.Row>
             </Table.Header>
@@ -528,25 +527,6 @@
                                         class="bg-primary text-white text-xs w-auto px-2 py-0.5 rounded-full"
                                         >{category}</span
                                     >
-                                {/each}
-                            </div>
-                        </Table.Cell>
-                        <Table.Cell>
-                            <div class="flex flex-row space-x-6">
-                                {#each product?.variants ?? [] as variant}
-                                    <div class="flex flex-col">
-                                        <span class="text-xs mb-1 -mt-4"
-                                            >{variant?.name}:</span
-                                        >
-                                        <div class="flex flex-row space-x-1">
-                                            {#each variant?.values ?? [] as value}
-                                                <span
-                                                    class="bg-primary text-white text-xs w-auto px-2 py-0.5 rounded-full"
-                                                    >{value.name}</span
-                                                >
-                                            {/each}
-                                        </div>
-                                    </div>
                                 {/each}
                             </div>
                         </Table.Cell>

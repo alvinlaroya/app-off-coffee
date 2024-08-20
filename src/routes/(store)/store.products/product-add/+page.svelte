@@ -17,12 +17,12 @@
     import { Label } from "$lib/components/ui/label";
     import { Input } from "$lib/components/ui/input";
     import { Textarea } from "$lib/components/ui/textarea";
-
+    import * as Avatar from "$lib/components/ui/avatar/index.js";
     import {
         Select,
         SelectTrigger,
-        SelectValue,
         SelectContent,
+        SelectValue,
         SelectItem,
     } from "$lib/components/ui/select";
     import { Button } from "$lib/components/ui/button";
@@ -42,13 +42,10 @@
     import MultiVariantInput from "../../(components)/multi-variant-input.svelte";
     import MultipleSelect from "$lib/components/reusable/MultipleSelect.svelte";
     import CardPreview from "../../(components)/card-preview.svelte";
+    import MultiSelectProductSearch from "$lib/components/reusable/MultiSelectProductSearch.svelte";
 
     export let data;
-    $: ({ categories } = data);
-
-    $: {
-        console.log("CATEGORIES", categories);
-    }
+    $: ({ categories, allProducts } = data);
 
     let previewImage;
 
@@ -65,20 +62,24 @@
             {
                 name: "Hot or Iced",
                 required: true,
+                multiple: false,
                 values: [
                     {
                         name: "Iced",
                         price: null,
                         is_available: true,
+                        is_popular: false,
                     },
                     {
                         name: "Hot",
                         price: null,
                         is_available: true,
+                        is_popular: false,
                     },
                 ],
             },
         ],
+        upsell: [],
         image: "",
     };
 
@@ -233,7 +234,7 @@
                             </div>
                             <div class="grid gap-2">
                                 <Label htmlFor="price"
-                                    >Price Added Value (5%)</Label
+                                    >Final Price (Including 5% comission)</Label
                                 >
                                 <Input
                                     id="price"
@@ -361,6 +362,19 @@
                         data={product.variants}
                         bind:value={product.variants}
                     />
+                </div>
+                <div class="p-4 border rounded-md mt-3">
+                    <div
+                        class="w-full flex space-x-3 items-center p-3 bg-primary -mt-9 mb-4 rounded-md"
+                    >
+                        <Label htmlFor="image" class="text-white"
+                            >Frequently Bought Together (Upsell)</Label
+                        >
+                        <div class="bg-muted py-1 px-2 text-sm rounded-full">
+                            Optional
+                        </div>
+                    </div>
+                    <MultiSelectProductSearch items={allProducts.products} bind:value={product.upsell} />
                 </div>
             </form>
         </CardContent>

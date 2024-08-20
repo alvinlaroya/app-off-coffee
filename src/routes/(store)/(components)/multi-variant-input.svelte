@@ -5,7 +5,7 @@
     import { Button } from "$lib/components/ui/button";
     import { Switch } from "$lib/components/ui/switch";
 
-    import { Plus, Trash } from "lucide-svelte";
+    import { Plus, Trash, Flame } from "lucide-svelte";
 
     export let data;
     let variants = data;
@@ -35,6 +35,20 @@
                                     >{variant.required
                                         ? "Required"
                                         : "Optional"}</Label
+                                >
+                            </div>
+                            <span class="mx-5 -mt-1 text-gray-300">|</span>
+                            <div class="flex items-center space-x-4">
+                                <Switch
+                                    id="open-store"
+                                    bind:checked={variant.multiple}
+                                    onCheckedChange={(e) =>
+                                        (variant.multiple = e)}
+                                />
+                                <Label class="text-xs"
+                                    >{variant.multiple
+                                        ? "Multiple Selection"
+                                        : "Single Selection"}</Label
                                 >
                             </div>
                         </div>
@@ -73,7 +87,7 @@
                                     values: [
                                         {
                                             name: "",
-                                            price: 0.0,
+                                            price: null,
                                             is_available: true,
                                         },
                                     ],
@@ -111,7 +125,7 @@
                                     for="variant-nam"
                                     class="text-xs flex items-center "
                                 >
-                                    {value?.name ?? ""} Additional Price
+                                    {value?.name ?? ""} - Additional Price
                                     <span
                                         class="bg-primary ml-2 text-white text-[10px] px-2 py-0.5 rounded-full"
                                     >
@@ -127,7 +141,28 @@
                                     bind:value={value.price}
                                 />
                             </div>
-
+                            <Button
+                                variant="outline"
+                                class="mt-6"
+                                size="sm"
+                                style="border: {value.is_popular
+                                    ? '1px solid red'
+                                    : ''}"
+                                on:click={() =>
+                                    (variant.values[idx].is_popular =
+                                        !value.is_popular)}
+                                disabled={variant.values.length <= 1}
+                            >
+                                <Flame
+                                    class="h-5 w-5 mr-2 transition-colors"
+                                    style="fill: {value.is_popular
+                                        ? 'red'
+                                        : 'transparent'}; color: {value.is_popular
+                                        ? 'red'
+                                        : 'gray'}"
+                                />
+                                Popular
+                            </Button>
                             <Button
                                 variant="destructive"
                                 class="mt-6"
