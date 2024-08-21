@@ -13,6 +13,18 @@ const config = {
 				"2xl": "1400px"
 			}
 		},
+		colors: {
+			'white': '#ffffff',
+			'black': '#000000',
+			'red': '#dc3535',
+			'green': '#66bb6a',
+			'slate-100': '#f1f5f9',
+			'coffee-dark': '#0c0f14',
+			'coffee-brown': '#d17842',
+			'coffee-gray-300': '#252a32',
+			'coffee-gray-200': '#52555a',
+			'coffee-gray-100': '#aeaeae',
+		},
 		extend: {
 			colors: {
 				border: "hsl(var(--border) / <alpha-value>)",

@@ -93,11 +93,11 @@
                         data-sveltekit-preload-data="tap"
                         class="flex md:grid lg:flex items-center rounded-lg px-3 py-3 text-gray transition-all"
                         class:gap-3={expandedSidenav}
-                        class:hover:bg-gray-100={`${groupName}${navigation.link}` !==
+                        class:hover:bg-coffee-gray-100={`${groupName}${navigation.link}` !==
                             $page.route.id}
                         class:hover:text-white={`${groupName}${navigation.link}` ===
                             $page.route.id}
-                        class:bg-[#A67B5B]={`${groupName}${navigation.link}` ===
+                        class:bg-coffee-dark={`${groupName}${navigation.link}` ===
                             $page.route.id}
                         class:text-white={`${groupName}${navigation.link}` ===
                             $page.route.id}
@@ -116,7 +116,7 @@
 
                         {#if navigation?.badge}
                             <Badge
-                                class="ml-auto absolute right-5 md:right-3 lg:right-5 lg:flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-500"
+                                class="ml-auto absolute right-5 md:right-3 lg:right-5 lg:flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red"
                             >
                                 {navigation.badge}
                             </Badge>

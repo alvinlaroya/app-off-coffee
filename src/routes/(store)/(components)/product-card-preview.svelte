@@ -104,7 +104,7 @@
                         size="icon"
                         class="bg-[#141921] h-8 w-8 rounded-lg"
                     >
-                        <Heart class="w-4 h-4 text-red-500 fill-red-500" />
+                        <Heart class="w-4 h-4 text-red fill-red" />
                     </Button>
                 </div>
 
@@ -151,13 +151,13 @@
                             <button
                                 class="flex flex-col h-10 w-10 items-center justify-center rounded-md bg-[#141921]"
                             >
-                                <Croissant class="w-4 h-4 text-[#D17842]" />
+                                <Croissant class="w-4 h-4 text-coffee-brown" />
                                 <span class="text-[8px]">Pastry</span>
                             </button>
                             <button
                                 class="flex flex-col h-10 w-10 items-center justify-center rounded-md bg-[#141921]"
                             >
-                                <Coffee class="w-4 h-4 text-[#D17842]" />
+                                <Coffee class="w-4 h-4 text-coffee-brown" />
                                 <span class="text-[8px]">Coffee</span>
                             </button>
                         </div>
@@ -166,7 +166,7 @@
                         <div class="flex items-center">
                             <div class="flex items-center space-x-1">
                                 <StarIcon
-                                    class="w-4 h-4 fill-[#D17842] text-[#D17842]"
+                                    class="w-4 h-4 fillcoffee-brown text-coffee-brown"
                                 />
                                 <span class="font-semibold text-sm">4.5</span>
                                 <span class="font-thin text-[9px]">(2,000)</span
@@ -178,7 +178,7 @@
                                 class="flex h-8 w-[85px] items-center justify-center rounded-md bg-[#141921]"
                             >
                                 <Flame
-                                    class="w-3 h-3 fill-red-500 text-red-500 mr-1"
+                                    class="w-3 h-3 fill-coffee-brown text-coffee-brown mr-1"
                                 />
                                 <span class="text-[9px]">Popular</span>
                             </div>
@@ -209,7 +209,7 @@
                                     >
                                     <span
                                         class="text-[9px] font-semibold text-white px-2 py-0.5 flex items-center rounded-full"
-                                        class:bg-[#D17842]={variant?.required}
+                                        class:bg-coffee-brown={variant?.required}
                                         class:text-white={variant?.required}
                                         class:bg-gray-300={!variant?.required}
                                         class:text-black={!variant?.required}
@@ -226,14 +226,14 @@
                                             class="px-5 py-3.5 rounded-lg text-xs bg-[#141921] text-nowrap flex flex-row items-center relative"
                                             class:border={valueIdx == 0 &&
                                                 variant.required}
-                                            class:border-[#D17842]={valueIdx ==
+                                            class:border-coffee-brown={valueIdx ==
                                                 0}
                                         >
                                             <span
                                                 class="text-[8px] absolute right-2 top-0"
-                                                class:text-[#D17842]={value?.price >
+                                                class:text-coffee-brown={value?.price >
                                                     0}
-                                                class:text-green-600={value?.price <=
+                                                class:text-green={value?.price <=
                                                     0}
                                                 >{value?.price &&
                                                 value.price > 0
@@ -243,7 +243,7 @@
                                             <div class="flex items-center">
                                                 {#if value.is_popular}
                                                     <Flame
-                                                        class="w-3 h-3 fill-red-500 text-red-500 mr-1"
+                                                        class="w-3 h-3 fill-red text-red mr-1"
                                                     />
                                                 {/if}
                                                 {value?.name}
@@ -270,12 +270,12 @@
                     <div class="flex flex-col justify-center items-center">
                         <span class="text-[10px] font-thin">Price</span>
                         <div class="flex space-x-1 -mt-[2px]">
-                            <span class="text-[#D17842]">₱</span>
+                            <span class="text-coffee-brown">₱</span>
                             <span class="font-semibold">{productPrice}</span>
                         </div>
                     </div>
                     <button
-                        class="w-full bg-[#D17842] rounded-xl text-sm font-semibold"
+                        class="w-full bg-coffee-brown rounded-xl text-sm font-semibold"
                     >
                         Add to Cart
                     </button>
