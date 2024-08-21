@@ -36,6 +36,8 @@
         LoaderCircle,
         CircleAlert,
         Camera,
+        Coffee,
+        Smartphone,
     } from "lucide-svelte";
     import StarIcon from "$lib/components/icons/StarIcon.svelte";
 
@@ -186,8 +188,8 @@
     $: totalPrice = 1;
 </script>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-    <Card class="w-full col-span-2">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+    <Card class="w-full col-span-3">
         <CardHeader>
             <CardTitle>Add New Product</CardTitle>
             <CardDescription
@@ -374,7 +376,10 @@
                             Optional
                         </div>
                     </div>
-                    <MultiSelectProductSearch items={allProducts.products} bind:value={product.upsell} />
+                    <MultiSelectProductSearch
+                        items={allProducts.products}
+                        bind:value={product.upsell}
+                    />
                 </div>
             </form>
         </CardContent>
@@ -395,6 +400,11 @@
             <pre>{JSON.stringify(product.variants)}</pre>
             <pre>{JSON.stringify(variantsPrice)}</pre>
         </div> -->
+        <div class="flex space-x-2 justify-center items-center mb-3">
+            <Smartphone class="h-4 w-4" />
+            <h1 class="text-center font-semibold">Mobile Preview</h1>
+        </div>
+
         {#if uploadImageError?.error}
             <Alert.Root variant="destructive" class="mb-9">
                 <CircleAlert class="h-4 w-4" />
@@ -409,42 +419,6 @@
             loading={uploadingImage}
             on:cameraClick={() =>
                 document.getElementById("file-upload").click()}
-        >
-            <svelte:fragment slot="body">
-                <div class="pt-3 flex flex-col -mt-3">
-                    <div class="flex justify-between mb-1">
-                        <h1 class="text-2xl font-semibold">
-                            {product?.name || "Product Name"}
-                        </h1>
-                        <div class="flex items-center gap-0.5 ml-auto">
-                            <StarIcon class="w-5 h-5 fill-primary" />
-                            <StarIcon class="w-5 h-5 fill-primary" />
-                            <StarIcon class="w-5 h-5 fill-primary" />
-                            <StarIcon
-                                class="w-5 h-5 fill-muted stroke-muted-foreground"
-                            />
-                            <span class="ml-2">(4.3)</span>
-                        </div>
-                    </div>
-                    <span class="text-xl font-normal">
-                        ₱ {product?.price_added ?? "0"}.00
-                    </span>
-                    <span class="mt-4 text-sm font-thin">
-                        {product?.description || "No Description"}</span
-                    >
-                </div>
-                <div class="pt-3 flex flex-col mt-1">
-                    <span class="text-sm mb-2">Category: </span>
-                    <div class="flex space-x-2">
-                        {#each product?.category ?? [] as category}
-                            <span
-                                class="bg-primary text-white text-xs w-auto px-3 py-1 rounded-full"
-                                >{category.value}</span
-                            >
-                        {/each}
-                    </div>
-                </div>
-            </svelte:fragment>
-        </CardPreview>
+        />
     </div>
 </div>
