@@ -4,11 +4,7 @@
     import { toast } from "svelte-sonner";
     import { invalidateAll, goto } from "$app/navigation";
     import { enhance } from "$app/forms";
-    import {
-        useEventService,
-        currentlyOpen,
-        uploadCompressImage,
-    } from "$lib/utils";
+    import { useEventService, uploadCompressImage } from "$lib/utils";
     import { storageRestaurantUrl, days } from "$lib/constant";
     import {
         Card,
@@ -39,7 +35,7 @@
     import OperationTimeRangePicker from "../(components)/operation-time-range-picker.svelte";
     import PeakHoursPicker from "../(components)/peak-hours-picker.svelte";
     import AdvancedTelInput from "$lib/components/reusable/AdvancedTelInput.svelte";
-    import CardPreview from "../(components)/card-preview.svelte";
+    import StoreCardPreview from "../(components)/store-card-preview.svelte";
 
     import LeafletMap from "$lib/components/reusable/LeafletMap.svelte";
 
@@ -51,6 +47,7 @@
         LoaderCircle,
         CircleAlert,
         Camera,
+        Smartphone,
     } from "lucide-svelte";
 
     export let data;
@@ -245,36 +242,11 @@
         isActivating = false;
     };
 
-    $: openAndClosing = () => {
-        const currentDate = new Date();
-        const currentDay = currentDate.getDay();
-
-        if (
-            !storeState?.operation_time?.[days[currentDay - 1]]?.opening &&
-            !storeState?.operation_time?.[days[currentDay - 1]]?.closing
-        ) {
-            return {
-                isOpen: false,
-                closing: null,
-            };
-        }
-
-        const opening =
-            storeState?.operation_time[days[currentDay - 1]]?.opening;
-        const closing =
-            storeState?.operation_time[days[currentDay - 1]]?.closing;
-
-        return {
-            isOpen: currentlyOpen(opening, closing),
-            closing,
-        };
-    };
-
     $: disabled = isLoading || isActivating;
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-    <div class="w-full col-span-3 lg:col-span-2 order-2 lg:order-1">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+    <div class="w-full col-span-3 lg:col-span-3 order-2 lg:order-1">
         {#if storeState?.id && !storeState.is_active}
             <Alert.Root variant="destructive" class="mb-4">
                 <CircleAlert class="h-4 w-4" />
@@ -436,6 +408,10 @@
         class:lg:top-[100px]={!uploadImageError.error}
         style="align-self: flex-start"
     >
+        <div class="flex space-x-2 justify-center items-center mb-3">
+            <Smartphone class="h-4 w-4" />
+            <h1 class="text-center font-semibold">Mobile Preview</h1>
+        </div>
         {#if uploadImageError?.error}
             <Alert.Root variant="destructive" class="mb-9">
                 <CircleAlert class="h-4 w-4" />
@@ -443,48 +419,14 @@
                 <Alert.Description>{uploadImageError.desc}.</Alert.Description>
             </Alert.Root>
         {/if}
-        <CardPreview
+        <StoreCardPreview
             data={storeState}
             {uploadedImage}
+            products={recentProducts}
             bucket="store"
             loading={uploadingImage}
             on:cameraClick={() => document.getElementById("image").click()}
-        >
-            <svelte:fragment slot="body">
-                <div class="flex justify-between mb-4">
-                    <h1 class="text-2xl font-semibold">
-                        {storeState?.name || "Store Name"}
-                    </h1>
-                    <span>4.3 (127)</span>
-                </div>
-                <div class="flex space-x-2 items-center">
-                    <Store class="w-4 h-4" />
-                    <span class="text-sm">Coffee Shop</span>
-                </div>
-                <div class="flex space-x-2 items-center">
-                    <Clock class="w-4 h-4" />
-                    <p class="text-sm">
-                        <span class="text-green-800"
-                            >{openAndClosing().isOpen ? "Open" : "Closed"}
-                        </span>
-                        {#if openAndClosing()?.closing}
-                            <span>
-                                ⋅ Closes {openAndClosing().closing}
-                            </span>
-                        {/if}
-                    </p>
-                </div>
-                <div class="flex space-x-2 items-center">
-                    <MapPin class="w-4 h-4" />
-                    <span class="text-sm"
-                        >{storeState?.address ?? "No Store Address"}</span
-                    >
-                </div>
-                <div class="py-3 text-sm font-thin">
-                    {storeState.description ?? "No Description"}
-                </div>
-            </svelte:fragment>
-        </CardPreview>
+        />
     </div>
 </div>
 <Card class="mt-6">

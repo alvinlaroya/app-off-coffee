@@ -43,7 +43,7 @@
 
     import MultiVariantInput from "../../(components)/multi-variant-input.svelte";
     import MultipleSelect from "$lib/components/reusable/MultipleSelect.svelte";
-    import CardPreview from "../../(components)/card-preview.svelte";
+    import ProductCardPreview from "../../(components)/product-card-preview.svelte";
     import MultiSelectProductSearch from "$lib/components/reusable/MultiSelectProductSearch.svelte";
 
     export let data;
@@ -412,7 +412,7 @@
                 <Alert.Description>{uploadImageError.desc}.</Alert.Description>
             </Alert.Root>
         {/if}
-        <CardPreview
+        <ProductCardPreview
             data={product}
             {uploadedImage}
             bucket="product"

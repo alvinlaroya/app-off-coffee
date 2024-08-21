@@ -133,7 +133,7 @@
                 <!-- Group Details -->
                 <div
                     class="w-full h-full text-white p-4 sticky top-[50px] rounded-tl-3xl rounded-tr-3xl z-0 flex flex-col justify-between"
-                    style="background-color: rgba(0, 0, 0, 0.5); margin-top: -{productTitleHeaight +
+                    style="background-color: rgba(0, 0, 0, 0.7); margin-top: -{productTitleHeaight +
                         65}px"
                     bind:this={groupContentRef}
                 >
@@ -231,7 +231,7 @@
                                         >
                                             <span
                                                 class="text-[8px] absolute right-2 top-0"
-                                                class:text-red-400={value?.price >
+                                                class:text-[#D17842]={value?.price >
                                                     0}
                                                 class:text-green-600={value?.price <=
                                                     0}
